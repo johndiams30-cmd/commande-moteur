@@ -1,62 +1,40 @@
-// === CONFIG ===
-const ipESP32 = "http://ADRESSE_IP_ESP32"; // Remplacez par l'IP de votre ESP32
-const lampImg = document.getElementById("lamp");
-const connectionIndicator = document.getElementById("connection-indicator");
-const controlPanel = document.getElementById("control-panel");
-const toggleBtn = document.getElementById("toggle-panel");
-const closePanelBtn = document.getElementById("close-panel");
+const menu = document.getElementById("menuPrincipal")
+const controle = document.getElementById("panneauControle")
+const ampoule = document.getElementById("ampoule")
+const etat = document.getElementById("etat")
 
-// Afficher / cacher le panneau
-toggleBtn.addEventListener("click", () => {
-    controlPanel.classList.remove("hidden");
-    toggleBtn.classList.add("hidden");
-});
-
-closePanelBtn.addEventListener("click", () => {
-    controlPanel.classList.add("hidden");
-    toggleBtn.classList.remove("hidden");
-});
-
-// Heure et date
-function updateDateTime() {
-    const now = new Date();
-    document.getElementById("time").textContent = now.toLocaleTimeString();
-    document.getElementById("date").textContent = now.toLocaleDateString();
-}
-setInterval(updateDateTime, 1000);
-updateDateTime();
-
-// Vérifier connexion ESP32 et état lampe
-function checkESP32() {
-    fetch(`${ipESP32}/etat`)
-        .then(response => response.json())
-        .then(data => {
-            connectionIndicator.className = "connected";
-
-            if (data.lampe === "on") {
-                lampImg.src = "https://i.imgur.com/9F8h6sP.png"; // ampoule allumée
-            } else {
-                lampImg.src = "https://i.imgur.com/8ZC5Hsq.png"; // ampoule éteinte
-            }
-        })
-        .catch(() => {
-            connectionIndicator.className = "disconnected";
-        });
+// ouvrir panneau
+function ouvrirControle() {
+    menu.classList.add("hidden")
+    controle.classList.remove("hidden")
 }
 
-// Vérifier toutes les 5 secondes
-setInterval(checkESP32, 5000);
-checkESP32();
+// retour menu
+function retourMenu() {
+    controle.classList.add("hidden")
+    menu.classList.remove("hidden")
+}
 
-// Boutons Allumer / Éteindre
-document.getElementById("btn-on").addEventListener("click", () => {
-    fetch(`${ipESP32}/on`)
-        .then(() => checkESP32())
-        .catch(() => alert("Erreur : impossible de contacter l'ESP32"));
-});
+// allumer
+function allumer() {
 
-document.getElementById("btn-off").addEventListener("click", () => {
-    fetch(`${ipESP32}/off`)
-        .then(() => checkESP32())
-        .catch(() => alert("Erreur : impossible de contacter l'ESP32"));
-});
+    fetch("http://IP_ESP32/on")
+
+    ampoule.classList.remove("off")
+    ampoule.classList.add("on")
+
+    etat.innerText = "Allumée"
+    etat.style.color = "lime"
+}
+
+// eteindre
+function eteindre() {
+
+    fetch("http://IP_ESP32/off")
+
+    ampoule.classList.remove("on")
+    ampoule.classList.add("off")
+
+    etat.innerText = "Éteinte"
+    etat.style.color = "white"
+}
