@@ -18,7 +18,7 @@ function retourMenu() {
 // allumer
 function allumer() {
 
-    fetch("http://IP_ESP32/on")
+    fetch("http://192.168.30.212/on")
 
     ampoule.classList.remove("off")
     ampoule.classList.add("on")
@@ -30,7 +30,7 @@ function allumer() {
 // eteindre
 function eteindre() {
 
-    fetch("http://IP_ESP32/off")
+    fetch("http://192.168.30.212/off")
 
     ampoule.classList.remove("on")
     ampoule.classList.add("off")
