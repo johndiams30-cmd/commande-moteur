@@ -1,21 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
-    <title>Contrôle Lampe IoT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard IoT Lampe</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <h1>Contrôle de la lampe</h1>
+    <div class="container">
+        <h1>💡 Contrôle de la Lampe IoT</h1>
 
-    <button onclick="allumer()">Allumer</button>
-    <button onclick="eteindre()">Éteindre</button>
+        <div class="status">
+            <span>État de la lampe : </span>
+            <span id="etat-lampe">OFF</span>
+        </div>
+
+        <div class="buttons">
+            <button id="btn-on" class="on">Allumer</button>
+            <button id="btn-off" class="off">Éteindre</button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
-
 </body>
 
 </html>
