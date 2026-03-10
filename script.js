@@ -1,81 +1,36 @@
-const ipESP = "http://192.168.30.212";
-
-function ouvrirControle() {
-
-    document.getElementById("menu").style.display = "none";
-    document.getElementById("controle").style.display = "block";
-
-}
-
-function retourMenu() {
-
-    document.getElementById("menu").style.display = "block";
-    document.getElementById("controle").style.display = "none";
-
-}
-
+const writeAPI = "W895NE005ZS6GHF6";
 
 function allumer() {
-
-    fetch(ipESP + "/on", { mode: "no-cors" });
-
-    document.getElementById("ampoule").classList.remove("off");
-    document.getElementById("ampoule").classList.add("on");
-
+    fetch("https://api.thingspeak.com/update?api_key=" + writeAPI + "&field1=1");
+    document.getElementById("ampoule").className = "on";
     document.getElementById("etat").innerText = "Allumée";
-
 }
-
 
 function eteindre() {
-
-    fetch(ipESP + "/off", { mode: "no-cors" });
-
-    document.getElementById("ampoule").classList.remove("on");
-    document.getElementById("ampoule").classList.add("off");
-
+    fetch("https://api.thingspeak.com/update?api_key=" + writeAPI + "&field1=0");
+    document.getElementById("ampoule").className = "off";
     document.getElementById("etat").innerText = "Éteinte";
-
 }
 
-
-
-// heure et date
-
-function horloge() {
-
-    let maintenant = new Date()
-
-    let heure = maintenant.toLocaleTimeString()
-
-    let date = maintenant.toLocaleDateString()
-
-    document.getElementById("heure").innerText = "🕒 " + heure
-
-    document.getElementById("date").innerText = "📅 " + date
-
-}
-
-setInterval(horloge, 1000)
-
-
-
-// test connexion ESP32
-
-function testESP() {
-
-    fetch(ipESP + "/etat", { mode: "no-cors" })
-        .then(() => {
-
-            document.getElementById("wifi").innerText = "🟢 ESP32 connecté"
-
+// Mettre à jour l'état depuis ThingSpeak toutes les 5 secondes
+function majEtat() {
+    fetch("https://api.thingspeak.com/channels/VOTRE_CHANNEL_ID/fields/1/last.txt")
+        .then(response => response.text())
+        .then(data => {
+            data = data.trim();
+            if (data == "1") {
+                document.getElementById("ampoule").className = "on";
+                document.getElementById("etat").innerText = "Allumée";
+                document.getElementById("wifi").innerText = "🟢 ESP32 connecté";
+            } else {
+                document.getElementById("ampoule").className = "off";
+                document.getElementById("etat").innerText = "Éteinte";
+                document.getElementById("wifi").innerText = "🟢 ESP32 connecté";
+            }
         })
         .catch(() => {
-
-            document.getElementById("wifi").innerText = "🔴 ESP32 déconnecté"
-
-        })
-
+            document.getElementById("wifi").innerText = "🔴 ESP32 déconnecté";
+        });
 }
 
-setInterval(testESP, 5000)
+setInterval(majEtat, 5000);
