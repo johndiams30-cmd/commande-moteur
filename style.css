@@ -1,24 +1,13 @@
 body{
-font-family: Arial;
-background:#000;
+background:black;
 color:white;
 text-align:center;
-padding:20px;
-}
-
-.page{
-max-width:500px;
-margin:auto;
-}
-
-.hidden{
-display:none;
+font-family:Arial;
 }
 
 .description{
 margin:20px;
-font-size:18px;
-color:#ddd;
+color:#ccc;
 }
 
 .card{
@@ -28,45 +17,32 @@ border-radius:15px;
 margin:20px;
 }
 
+button{
+padding:15px;
+margin:10px;
+font-size:18px;
+border:none;
+border-radius:10px;
+}
+
 .btn-main{
 background:#0d6efd;
 color:white;
-padding:15px;
-border:none;
-border-radius:10px;
-font-size:18px;
-width:100%;
 }
 
 .btn-on{
 background:#00c853;
 color:white;
-padding:15px;
-border:none;
-border-radius:10px;
-font-size:18px;
-width:80%;
-margin:10px;
 }
 
 .btn-off{
 background:#ff1744;
 color:white;
-padding:15px;
-border:none;
-border-radius:10px;
-font-size:18px;
-width:80%;
-margin:10px;
 }
 
 .btn-retour{
 background:#555;
 color:white;
-padding:12px;
-border:none;
-border-radius:10px;
-margin-top:20px;
 }
 
 .ampoule{
