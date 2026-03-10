@@ -11,17 +11,41 @@
 <body>
 
     <div class="container">
-        <h1>💡 Contrôle de la Lampe IoT</h1>
 
-        <div class="status">
-            <span>État de la lampe : </span>
-            <span id="etat-lampe">OFF</span>
-        </div>
+        <header>
+            <h1>💡 Dashboard Lampe IoT</h1>
+            <div class="project-description">
+                <p>Ce projet permet de contrôler une lampe à distance via un ESP32.
+                    L'interface affiche l'état de la lampe, l'heure et la date en temps réel,
+                    ainsi qu'un témoin de connexion avec l'ESP32. Le panneau de commande
+                    permet d'allumer ou d'éteindre la lampe en toute sécurité.</p>
+            </div>
+            <div class="datetime">
+                <span id="date"></span> | <span id="time"></span>
+            </div>
+            <div class="connection">
+                <span>Témoin ESP32: </span><span id="connection-indicator" class="disconnected"></span>
+            </div>
+        </header>
 
-        <div class="buttons">
-            <button id="btn-on" class="on">Allumer</button>
-            <button id="btn-off" class="off">Éteindre</button>
-        </div>
+        <main>
+            <div class="lamp-container">
+                <img id="lamp" src="https://i.imgur.com/8ZC5Hsq.png" alt="Ampoule éteinte">
+            </div>
+        </main>
+
+        <!-- Bouton pour afficher le panneau -->
+        <button id="toggle-panel" class="toggle-btn">Panneau de configuration ⚙️</button>
+
+        <!-- Panneau de commande caché -->
+        <footer id="control-panel" class="hidden">
+            <button id="close-panel" class="close-btn">⬅ Retour</button>
+            <div class="controls">
+                <button id="btn-on" class="on">Allumer</button>
+                <button id="btn-off" class="off">Éteindre</button>
+            </div>
+        </footer>
+
     </div>
 
     <script src="script.js"></script>
