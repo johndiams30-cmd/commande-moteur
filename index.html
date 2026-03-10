@@ -5,7 +5,8 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projet IoT CFAO 2025</title>
+
+    <title>Dashboard IoT - CFAO 2025</title>
 
     <link rel="stylesheet" href="style.css">
 
@@ -13,33 +14,31 @@
 
 <body>
 
-
     <!-- MENU PRINCIPAL -->
 
     <div id="menu">
 
-        <h1>Projet IoT CFAO 2025</h1>
+        <h1>Projet INDUSTRIE 4.0</h1>
 
-        <h3>Contrôle d'éclairage intelligent</h3>
+        <h3>Contrôle de moteur intelligent</h3>
 
         <p class="description">
-            Ce projet vise à développer un système de contrôle d'éclairage intelligent basé sur l'IoT.
+            Ce projet consiste à développer un système de contrôle de moteur intelligent
+            basé sur l'ESP32 et les technologies IoT.
         </p>
-
 
         <div class="card">
 
             <p><b>Sous la direction de :</b></p>
-            <h2>Prof. Narcisse MENI BABAKIDI</h2>
+            <h2>Laboratoire MasterSlave</h2>
 
             <p><b>Assisté par :</b></p>
 
-            <p>Ass. LISONGO BAÏTA Gaïda</p>
+
             <p>Ass. DIAMONEKA VAKANDA Jonathan</p>
-            <p>Ass. NTOYA MABEKA Rodrigue</p>
+
 
         </div>
-
 
         <button class="btn-main" onclick="ouvrirControle()">
             Voir le panneau de contrôle
@@ -49,17 +48,27 @@
 
 
 
-    <!-- PANNEAU DE CONTROLE -->
+    <!-- PANNEAU SUPERVISION -->
 
     <div id="controle" style="display:none;">
 
         <h1>Supervision Lampe</h1>
 
-        <p id="connexion">🟢 Connecté</p>
+        <div class="info">
+
+            <span id="wifi">🔴 ESP32 déconnecté</span>
+
+            <span id="date"></span>
+
+            <span id="heure"></span>
+
+        </div>
+
 
         <div id="ampoule" class="ampoule off"></div>
 
-        <h2>État : <span id="etat">Éteinte</span></h2>
+        <h2>Etat : <span id="etat">Éteinte</span></h2>
+
 
         <button class="btn-on" onclick="allumer()">Allumer</button>
 
@@ -68,7 +77,7 @@
         <br><br>
 
         <button class="btn-retour" onclick="retourMenu()">
-            ⬅ Retour au menu principal
+            ⬅ Retour menu principal
         </button>
 
     </div>

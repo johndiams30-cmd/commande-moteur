@@ -1,20 +1,22 @@
 body{
-background:black;
+background:#000;
 color:white;
-text-align:center;
 font-family:Arial;
+text-align:center;
+padding:20px;
 }
 
 .description{
-margin:20px;
 color:#ccc;
+margin:20px;
 }
 
 .card{
-background:#222;
+background:#111;
 padding:20px;
 border-radius:15px;
 margin:20px;
+box-shadow:0 0 10px #333;
 }
 
 button{
@@ -45,16 +47,22 @@ background:#555;
 color:white;
 }
 
+.info{
+margin:20px;
+font-size:18px;
+}
+
 .ampoule{
-width:200px;
-height:200px;
+width:180px;
+height:180px;
 border-radius:50%;
 margin:30px auto;
+transition:0.4s;
 }
 
 .on{
 background:yellow;
-box-shadow:0 0 80px yellow;
+box-shadow:0 0 100px yellow;
 }
 
 .off{
