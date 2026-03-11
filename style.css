@@ -1,5 +1,5 @@
 body{
-background:#000;
+background:black;
 color:white;
 font-family:Arial;
 text-align:center;
@@ -25,6 +25,7 @@ margin:10px;
 font-size:18px;
 border:none;
 border-radius:10px;
+cursor:pointer;
 }
 
 .btn-main{
@@ -50,6 +51,9 @@ color:white;
 .info{
 margin:20px;
 font-size:18px;
+display:flex;
+justify-content:space-around;
+flex-wrap:wrap;
 }
 
 .ampoule{
