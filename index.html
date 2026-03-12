@@ -1,60 +1,85 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard IoT - CFAO 2025</title>
+    <title>Contrôle ESP32 - LED</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
+    <div class="container">
+        <!-- En-tête -->
+        <header>
+            <h1>🔧 Contrôle de l'ESP32</h1>
+            <p class="subtitle">Interface de commande pour LED via ThingSpeak</p>
+        </header>
 
-    <!-- MENU PRINCIPAL -->
-    <div id="menu">
-        <h1>Projet IoT CFAO 2025</h1>
-        <h3>Contrôle d'éclairage intelligent</h3>
-        <p class="description">
-            Ce projet permet de contrôler une lampe à distance via ThingSpeak et ESP32.
-        </p>
+        <!-- Carte principale -->
+        <main>
+            <div class="card">
+                <div class="led-container">
+                    <h2>État de la LED</h2>
+                    <div class="led-display">
+                        <div class="led-ring">
+                            <div class="led led-off" id="led"></div>
+                        </div>
+                        <span class="led-status" id="ledStatus">ÉTEINTE</span>
+                    </div>
+                </div>
 
-        <div class="card">
-            <p><b>Sous la direction de :</b></p>
-            <h2>Prof. Narcisse MENI BABAKIDI</h2>
-            <p><b>Assisté par :</b></p>
-            <p>Ass. LISONGO BAÏTA Gaïda</p>
-            <p>Ass. DIAMONEKA VAKANDA Jonathan</p>
-            <p>Ass. NTOYA MABEKA Rodrigue</p>
-        </div>
+                <div class="controls">
+                    <h2>Commandes</h2>
+                    <div class="button-group">
+                        <button class="btn btn-on" id="btnOn" onclick="sendCommand(1)">
+                            <span class="btn-icon">🔛</span>
+                            <span class="btn-text">ALLUMER</span>
+                        </button>
+                        <button class="btn btn-off" id="btnOff" onclick="sendCommand(0)">
+                            <span class="btn-icon">🔒</span>
+                            <span class="btn-text">ÉTEINDRE</span>
+                        </button>
+                    </div>
+                </div>
 
-        <button class="btn-main" onclick="ouvrirControle()">
-            Voir le panneau de contrôle
-        </button>
+                <!-- Informations en temps réel -->
+                <div class="info-panel">
+                    <div class="info-item">
+                        <span class="info-label">Dernière commande :</span>
+                        <span class="info-value" id="lastCommand">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Dernière mise à jour :</span>
+                        <span class="info-value" id="lastUpdate">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Statut connexion :</span>
+                        <span class="info-value" id="connectionStatus">OK</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section historique (optionnelle) -->
+            <div class="card history-card">
+                <h2>📊 Historique des commandes</h2>
+                <div class="chart-container">
+                    <canvas id="commandChart"></canvas>
+                </div>
+                <div class="history-list" id="historyList">
+                    <!-- L'historique sera ajouté ici par JavaScript -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Pied de page -->
+        <footer>
+            <p>Connecté à ThingSpeak - Channel ID: 3295962</p>
+            <p class="small">Dernière lecture: <span id="refreshTime">-</span></p>
+        </footer>
     </div>
 
-    <!-- PANNEAU SUPERVISION -->
-    <div id="controle" style="display:none;">
-        <h1>Supervision Lampe</h1>
-
-        <div class="info">
-            <span id="wifi">🔴 ESP32 déconnecté</span>
-            <span id="date"></span>
-            <span id="heure"></span>
-        </div>
-
-        <div id="ampoule" class="ampoule off"></div>
-        <h2>État : <span id="etat">Éteinte</span></h2>
-
-        <button class="btn-on" onclick="allumer()">Allumer</button>
-        <button class="btn-off" onclick="eteindre()">Éteindre</button>
-
-        <br><br>
-        <button class="btn-retour" onclick="retourMenu()">
-            ⬅ Retour au menu principal
-        </button>
-    </div>
-
+    <!-- Bibliothèques -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
-
 </html>
