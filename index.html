@@ -1,17 +1,26 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contrôle ESP32 - LED</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
-<body>
+
+<body class="dark-theme">
     <div class="container">
         <!-- En-tête -->
         <header>
-            <h1>🔧 Contrôle de l'ESP32</h1>
+            <div class="header-top">
+                <h1>🔧 Contrôle de l'ESP32</h1>
+                <button id="themeToggle" class="theme-btn">
+                    <span class="theme-icon">☀️</span>
+                    <span class="theme-text">Mode clair</span>
+                </button>
+            </div>
             <p class="subtitle">Interface de commande pour LED via ThingSpeak</p>
         </header>
 
@@ -59,7 +68,7 @@
                 </div>
             </div>
 
-            <!-- Section historique (optionnelle) -->
+            <!-- Section historique -->
             <div class="card history-card">
                 <h2>📊 Historique des commandes</h2>
                 <div class="chart-container">
@@ -82,4 +91,5 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>

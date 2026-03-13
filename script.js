@@ -1,9 +1,9 @@
 // === CONFIGURATION ===
 const CONFIG = {
     channelId: '3295988',
-    writeApiKey: '10JCZMPJ1E41POZS',  // Votre Write API Key
-    readApiKey: 'QJVJO9L6RIRUKS1U',   // Votre Read API Key
-    refreshInterval: 15000, // 15 secondes (minimum ThingSpeak)
+    writeApiKey: '10JCZMPJ1E41POZS',
+    readApiKey: 'QJVJO9L6RIRUKS1U',
+    refreshInterval: 15000,
     maxHistoryItems: 20
 };
 
@@ -13,17 +13,88 @@ let commandHistory = [];
 let lastUpdateTime = null;
 let chart = null;
 
+// === GESTION DU THÈME ===
+function toggleTheme() {
+    const body = document.body;
+    const themeBtn = document.getElementById('themeToggle');
+    const themeIcon = themeBtn.querySelector('.theme-icon');
+    const themeText = themeBtn.querySelector('.theme-text');
+
+    if (body.classList.contains('dark-theme')) {
+        body.classList.remove('dark-theme');
+        body.classList.add('light-theme');
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Mode sombre';
+
+        if (chart) {
+            chart.options.scales.y.grid.color = 'rgba(0,0,0,0.1)';
+            chart.options.scales.y.ticks.color = '#333';
+            chart.options.scales.x.grid.color = 'rgba(0,0,0,0.1)';
+            chart.options.scales.x.ticks.color = '#333';
+            chart.update();
+        }
+
+        localStorage.setItem('theme', 'light');
+    } else {
+        body.classList.remove('light-theme');
+        body.classList.add('dark-theme');
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Mode clair';
+
+        if (chart) {
+            chart.options.scales.y.grid.color = 'rgba(255,255,255,0.1)';
+            chart.options.scales.y.ticks.color = '#e0e0e0';
+            chart.options.scales.x.grid.color = 'rgba(255,255,255,0.1)';
+            chart.options.scales.x.ticks.color = '#e0e0e0';
+            chart.update();
+        }
+
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+function loadSavedTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const body = document.body;
+    const themeBtn = document.getElementById('themeToggle');
+
+    if (themeBtn) {
+        const themeIcon = themeBtn.querySelector('.theme-icon');
+        const themeText = themeBtn.querySelector('.theme-text');
+
+        if (savedTheme === 'light') {
+            body.classList.add('light-theme');
+            body.classList.remove('dark-theme');
+            themeIcon.textContent = '🌙';
+            themeText.textContent = 'Mode sombre';
+        } else {
+            body.classList.add('dark-theme');
+            body.classList.remove('light-theme');
+            themeIcon.textContent = '☀️';
+            themeText.textContent = 'Mode clair';
+        }
+    }
+}
+
 // === INITIALISATION ===
 document.addEventListener('DOMContentLoaded', () => {
+    loadSavedTheme();
     initializeChart();
     loadInitialState();
     startAutoRefresh();
     setupEventListeners();
+
+    const themeBtn = document.getElementById('themeToggle');
+    if (themeBtn) {
+        themeBtn.addEventListener('click', toggleTheme);
+    }
 });
 
 // === CHART.JS INITIALIZATION ===
 function initializeChart() {
     const ctx = document.getElementById('commandChart').getContext('2d');
+    const isDarkTheme = document.body.classList.contains('dark-theme');
+
     chart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -31,8 +102,8 @@ function initializeChart() {
             datasets: [{
                 label: 'État de la LED',
                 data: [],
-                borderColor: '#667eea',
-                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderColor: '#ffaa00',
+                backgroundColor: isDarkTheme ? 'rgba(255, 170, 0, 0.2)' : 'rgba(255, 170, 0, 0.1)',
                 tension: 0.4,
                 fill: true
             }]
@@ -49,11 +120,23 @@ function initializeChart() {
                 y: {
                     beginAtZero: true,
                     max: 1,
+                    grid: {
+                        color: isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                    },
                     ticks: {
                         stepSize: 1,
+                        color: isDarkTheme ? '#e0e0e0' : '#333',
                         callback: function (value) {
                             return value === 1 ? 'ALLUMÉ' : 'ÉTEINT';
                         }
+                    }
+                },
+                x: {
+                    grid: {
+                        color: isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                    },
+                    ticks: {
+                        color: isDarkTheme ? '#e0e0e0' : '#333'
                     }
                 }
             }
@@ -78,7 +161,6 @@ function startAutoRefresh() {
 
 // === ÉCOUTEURS D'ÉVÉNEMENTS ===
 function setupEventListeners() {
-    // Animation des boutons
     const buttons = document.querySelectorAll('.btn');
     buttons.forEach(btn => {
         btn.addEventListener('mousedown', () => {
@@ -95,36 +177,25 @@ function setupEventListeners() {
 
 // === ENVOI D'UNE COMMANDE ===
 async function sendCommand(value) {
-    // Désactiver les boutons pendant l'envoi
     setButtonsDisabled(true);
 
-    // Mise à jour UI
     document.getElementById('lastCommand').textContent =
         value === 1 ? 'ALLUMER' : 'ÉTEINDRE';
     document.getElementById('lastUpdate').textContent =
         new Date().toLocaleTimeString('fr-FR');
 
-    // Afficher un indicateur de chargement
     showLoading(true);
 
     try {
-        // Construction de l'URL
         const url = `https://api.thingspeak.com/update?api_key=${CONFIG.writeApiKey}&field1=${value}`;
-
-        // Envoi de la commande
         const response = await fetch(url);
         const result = await response.text();
 
         if (response.ok && result !== '0') {
             console.log('Commande envoyée avec succès:', value);
-
-            // Ajouter à l'historique
             addToHistory(value);
-
-            // Mise à jour immédiate de la LED (optimiste)
             updateLEDState(value);
 
-            // Relecture de l'état après quelques secondes pour confirmation
             setTimeout(async () => {
                 await readLEDState();
             }, 5000);
@@ -139,11 +210,10 @@ async function sendCommand(value) {
         document.getElementById('connectionStatus').textContent = 'ERREUR';
     } finally {
         showLoading(false);
-        // Réactiver les boutons après le délai ThingSpeak
         setTimeout(() => {
             setButtonsDisabled(false);
             document.getElementById('connectionStatus').textContent = 'OK';
-        }, 15000); // 15 secondes
+        }, 15000);
     }
 }
 
@@ -151,17 +221,13 @@ async function sendCommand(value) {
 async function readLEDState() {
     try {
         const url = `https://api.thingspeak.com/channels/${CONFIG.channelId}/fields/1/last.json?api_key=${CONFIG.readApiKey}`;
-
         const response = await fetch(url);
         const data = await response.json();
 
         if (data.field1 !== undefined) {
             const value = parseInt(data.field1);
             updateLEDState(value);
-
-            // Ajouter à l'historique
             addToHistory(value, true);
-
             document.getElementById('connectionStatus').textContent = 'OK';
         }
     } catch (error) {
@@ -185,7 +251,6 @@ function updateLEDState(value) {
         currentLedState = 0;
     }
 
-    // Mettre à jour le graphique
     updateChart();
 }
 
@@ -200,7 +265,6 @@ function addToHistory(value, fromRead = false) {
 
     commandHistory.unshift(historyItem);
 
-    // Limiter la taille de l'historique
     if (commandHistory.length > CONFIG.maxHistoryItems) {
         commandHistory.pop();
     }
@@ -235,12 +299,10 @@ function updateHistoryDisplay() {
 function updateChart() {
     if (!chart) return;
 
-    // Ajouter le nouveau point
     const now = new Date();
     chart.data.labels.push(now.toLocaleTimeString('fr-FR'));
     chart.data.datasets[0].data.push(currentLedState);
 
-    // Garder seulement les 20 derniers points
     if (chart.data.labels.length > 20) {
         chart.data.labels.shift();
         chart.data.datasets[0].data.shift();
@@ -265,7 +327,6 @@ function showLoading(show) {
 }
 
 function showNotification(message, type) {
-    // Créer une notification temporaire
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.textContent = message;
