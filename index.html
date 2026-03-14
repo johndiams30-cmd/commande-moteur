@@ -15,13 +15,13 @@
         <!-- En-tête -->
         <header>
             <div class="header-top">
-                <h1>🔧 Contrôle de l'ESP32</h1>
+                <h1>🔧 Contrôle de MOTEUR</h1>
                 <button id="themeToggle" class="theme-btn">
                     <span class="theme-icon">☀️</span>
                     <span class="theme-text">Mode clair</span>
                 </button>
             </div>
-            <p class="subtitle">Interface de commande pour LED via ThingSpeak</p>
+            <p class="subtitle">Interface de commande pour Moteur via ThingSpeak</p>
 
             <!-- Nouvelle section de présentation du projet -->
             <div class="project-presentation">
@@ -31,7 +31,7 @@
                     <span class="badge">💡 LED</span>
                 </div>
                 <p class="project-description">
-                    Ce projet mise en place par l'Ir DIAMONEKA permet de contrôler à distance une Moteur connectée à un
+                    Ce projet mise en place par l'Ir DIAMONEKA permet de contrôler à distance un Moteur connectée sur
                     internet via ThingSpeak.
                     L'interface communique avec le cloud pour marche/arret du moteur et visualiser l'historique des
                     commandes en temps réel.
@@ -61,7 +61,7 @@
         <main>
             <div class="card">
                 <div class="led-container">
-                    <h2>État de la LED</h2>
+                    <h2>État de Moteur</h2>
                     <div class="led-display">
                         <div class="led-ring">
                             <div class="led led-off" id="led"></div>
@@ -75,11 +75,11 @@
                     <div class="button-group">
                         <button class="btn btn-on" id="btnOn" onclick="sendCommand(1)">
                             <span class="btn-icon">🔛</span>
-                            <span class="btn-text">ALLUMER</span>
+                            <span class="btn-text">ON</span>
                         </button>
                         <button class="btn btn-off" id="btnOff" onclick="sendCommand(0)">
                             <span class="btn-icon">🔒</span>
-                            <span class="btn-text">ÉTEINDRE</span>
+                            <span class="btn-text">OFF</span>
                         </button>
                     </div>
                 </div>
