@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>🔧 PROJET IoT - Commande Moteur</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * {
             margin: 0;
@@ -183,13 +186,15 @@
             gap: 8px;
             flex-wrap: wrap;
             justify-content: center;
+            margin-bottom: 15px;
         }
 
         .theme-btn,
         .logout-btn,
         .info-btn,
         .refresh-btn,
-        .export-btn {
+        .export-btn,
+        .pdf-btn {
             background: transparent;
             border: 2px solid #ffaa00;
             border-radius: 10px;
@@ -204,7 +209,8 @@
         .logout-btn:hover,
         .info-btn:hover,
         .refresh-btn:hover,
-        .export-btn:hover {
+        .export-btn:hover,
+        .pdf-btn:hover {
             background: #ffaa00;
             color: #333;
             transform: scale(1.05);
@@ -379,6 +385,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .history-list {
@@ -477,6 +485,52 @@
             opacity: 0.7;
         }
 
+        /* Style pour l'export PDF */
+        .pdf-export-content {
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .pdf-export-content h1 {
+            color: #ffaa00;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .pdf-export-content .pdf-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .pdf-export-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .pdf-export-content th,
+        .pdf-export-content td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .pdf-export-content th {
+            background: #ffaa00;
+            color: #333;
+        }
+
+        .pdf-footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+        }
+
         @media (max-width: 500px) {
             .info-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -517,7 +571,8 @@
 
         <div class="header-buttons">
             <button class="refresh-btn" id="refreshBtn">🔄 Rafraîchir</button>
-            <button class="export-btn" id="exportBtn">📥 Exporter CSV</button>
+            <button class="export-btn" id="exportBtn">📥 CSV</button>
+            <button class="pdf-btn" id="pdfBtn">📄 PDF</button>
             <button class="info-btn" id="infoBtn">ℹ️ Description</button>
             <button class="theme-btn" id="themeToggle">
                 <span class="theme-icon">☀️</span>
@@ -597,7 +652,7 @@
         </div>
     </div>
 
-    <!-- Page Description (simplifiée pour rester dans la limite) -->
+    <!-- Page Description -->
     <div class="description-page"
         style="display: none; max-width: 500px; width: 100%; border-radius: 20px; padding: 20px;" id="descriptionPage">
         <div class="description-card"
@@ -667,7 +722,6 @@
             maxHistoryItems: 50
         };
 
-        // Détection du type d'appareil
         function getDeviceType() {
             const userAgent = navigator.userAgent.toLowerCase();
             if (/mobile|android|iphone|ipad|phone/.test(userAgent)) {
@@ -676,7 +730,6 @@
             return "💻 PC";
         }
 
-        // Vibration sur mobile
         function vibrate() {
             if (navigator.vibrate) {
                 navigator.vibrate(50);
@@ -690,6 +743,7 @@
         let refreshInterval = null;
         let motorStartTime = null;
         let currentFilter = "all";
+        let pcCommands = 0, mobileCommands = 0, totalCommands = 0, todayCommands = 0;
 
         // ==================== TEMPS DE FONCTIONNEMENT ====================
         function updateRuntimeDisplay() {
@@ -751,9 +805,9 @@
                 const response = await fetch(url);
                 const data = await response.json();
 
-                let pcCommands = 0;
-                let mobileCommands = 0;
-                let todayCommands = 0;
+                pcCommands = 0;
+                mobileCommands = 0;
+                todayCommands = 0;
                 const today = new Date().toDateString();
 
                 if (data.feeds && data.feeds.length > 0) {
@@ -765,7 +819,6 @@
                             const device = feed.field2 || "Appareil inconnu";
                             const time = new Date(feed.created_at);
 
-                            // Compteurs
                             if (device.includes("PC")) pcCommands++;
                             else if (device.includes("Mobile")) mobileCommands++;
 
@@ -780,10 +833,12 @@
                     }
 
                     commandHistory = historyData.slice(0, CONFIG.maxHistoryItems);
+                    totalCommands = pcCommands + mobileCommands;
+
                     updateHistoryDisplay();
                     document.getElementById('pcCount').textContent = pcCommands;
                     document.getElementById('mobileCount').textContent = mobileCommands;
-                    document.getElementById('totalCommands').textContent = pcCommands + mobileCommands;
+                    document.getElementById('totalCommands').textContent = totalCommands;
                     document.getElementById('todayCount').textContent = todayCommands;
                     document.getElementById('syncStatus').innerHTML = '✅ Synchronisé avec ThingSpeak';
                     setTimeout(() => {
@@ -822,6 +877,89 @@
             `).join('');
         }
 
+        // ==================== EXPORT PDF ====================
+        async function exportPDF() {
+            if (commandHistory.length === 0) {
+                showNotification('Aucune donnée à exporter', 'error');
+                return;
+            }
+
+            showNotification('Génération du PDF en cours...', 'success');
+
+            // Créer le contenu pour le PDF
+            const currentDate = new Date().toLocaleString('fr-FR');
+            const motorState = currentLedState === 1 ? 'MARCHE ✅' : 'ARRÊT ❌';
+
+            let tableRows = '';
+            commandHistory.forEach(item => {
+                tableRows += `
+                    <tr>
+                        <td>${item.time.toLocaleDateString('fr-FR')}</td>
+                        <td>${item.time.toLocaleTimeString('fr-FR')}</td>
+                        <td>${item.value === 1 ? 'MARCHE' : 'ARRÊT'}</td>
+                        <td>${item.device || 'Inconnu'}</td>
+                    </tr>
+                `;
+            });
+
+            const pdfContent = `
+                <div class="pdf-export-content">
+                    <h1>🔧 PROJET IoT - Rapport d'activité</h1>
+                    <p style="text-align:center; color:#666;">Généré le : ${currentDate}</p>
+                    
+                    <div class="pdf-stats">
+                        <div><strong>État moteur :</strong> ${motorState}</div>
+                        <div><strong>Commandes totales :</strong> ${totalCommands}</div>
+                        <div><strong>Commandes aujourd'hui :</strong> ${todayCommands}</div>
+                    </div>
+                    
+                    <div class="pdf-stats">
+                        <div>💻 PC : ${pcCommands}</div>
+                        <div>📱 Mobile : ${mobileCommands}</div>
+                    </div>
+                    
+                    <h3>📜 Historique des commandes</h3>
+                    <table>
+                        <thead>
+                            <tr><th>Date</th><th>Heure</th><th>Commande</th><th>Appareil</th></tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                    
+                    <div class="pdf-footer">
+                        <p>Projet IoT - Contrôle à distance via ThingSpeak</p>
+                        <p>Développé par Ir DIAMONEKA VAKANDA Jonathan</p>
+                    </div>
+                </div>
+            `;
+
+            // Options pour html2pdf
+            const element = document.createElement('div');
+            element.innerHTML = pdfContent;
+            element.style.position = 'absolute';
+            element.style.left = '-9999px';
+            document.body.appendChild(element);
+
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: `rapport_moteur_${new Date().toISOString().slice(0, 19)}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, letterRendering: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                document.body.removeChild(element);
+                showNotification('PDF généré avec succès !', 'success');
+            }).catch(err => {
+                console.error('Erreur PDF:', err);
+                document.body.removeChild(element);
+                showNotification('Erreur lors de la génération du PDF', 'error');
+            });
+        }
+
         // ==================== EXPORT CSV ====================
         function exportCSV() {
             if (commandHistory.length === 0) {
@@ -834,7 +972,7 @@
                 csvContent += `${item.time.toLocaleDateString('fr-FR')},${item.time.toLocaleTimeString('fr-FR')},${item.value === 1 ? 'MARCHE' : 'ARRÊT'},${item.device}\n`;
             });
 
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
@@ -909,169 +1047,4 @@
                         label: 'État du Moteur',
                         data: [],
                         borderColor: '#ffaa00',
-                        backgroundColor: isDarkTheme ? 'rgba(255, 170, 0, 0.2)' : 'rgba(255, 170, 0, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 1,
-                            grid: { color: isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' },
-                            ticks: {
-                                stepSize: 1,
-                                color: isDarkTheme ? '#e0e0e0' : '#333',
-                                callback: (value) => value === 1 ? 'MARCHE' : 'ARRÊT'
-                            }
-                        },
-                        x: {
-                            grid: { color: isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' },
-                            ticks: { color: isDarkTheme ? '#e0e0e0' : '#333' }
-                        }
-                    }
-                }
-            });
-        }
-
-        async function readLEDState() {
-            try {
-                const url = `https://api.thingspeak.com/channels/${CONFIG.channelId}/fields/1/last.json?api_key=${CONFIG.readApiKey}`;
-                const response = await fetch(url);
-                const data = await response.json();
-
-                if (data.field1 !== undefined) {
-                    const value = parseInt(data.field1);
-                    updateLEDState(value);
-                    document.getElementById('connectionStatus').textContent = 'OK';
-                }
-            } catch (error) {
-                document.getElementById('connectionStatus').textContent = 'ERREUR';
-            }
-        }
-
-        function updateLEDState(value) {
-            const led = document.getElementById('led');
-            const ledStatus = document.getElementById('ledStatus');
-
-            if (value === 1) {
-                led.className = 'led led-on';
-                ledStatus.textContent = 'MARCHE ✅';
-                currentLedState = 1;
-            } else {
-                led.className = 'led led-off';
-                ledStatus.textContent = 'ARRÊT ❌';
-                currentLedState = 0;
-                motorStartTime = null;
-            }
-
-            updateChart();
-        }
-
-        function updateChart() {
-            if (!chart) return;
-            chart.data.labels.push(new Date().toLocaleTimeString('fr-FR'));
-            chart.data.datasets[0].data.push(currentLedState);
-            if (chart.data.labels.length > 20) {
-                chart.data.labels.shift();
-                chart.data.datasets[0].data.shift();
-            }
-            chart.update();
-        }
-
-        // ==================== RAFRAÎCHISSEMENT ====================
-        function startAutoRefresh() {
-            if (refreshInterval) clearInterval(refreshInterval);
-            refreshInterval = setInterval(async () => {
-                await readLEDState();
-                await loadHistory();
-                document.getElementById('refreshTime').textContent = new Date().toLocaleTimeString('fr-FR');
-            }, CONFIG.refreshInterval);
-        }
-
-        async function loadInitialState() {
-            await readLEDState();
-            await loadHistory();
-        }
-
-        // ==================== UTILITAIRES UI ====================
-        function setButtonsDisabled(disabled) {
-            const btnOn = document.getElementById('btnOn');
-            const btnOff = document.getElementById('btnOff');
-            if (btnOn) btnOn.disabled = disabled;
-            if (btnOff) btnOff.disabled = disabled;
-        }
-
-        function showLoading(show) {
-            const status = document.getElementById('connectionStatus');
-            if (show && status) {
-                status.innerHTML = '<span class="loading"></span>';
-            } else if (status) {
-                status.textContent = 'OK';
-            }
-        }
-
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.textContent = message;
-            notification.style.cssText = `
-                position: fixed; bottom: 20px; right: 20px; padding: 12px 24px;
-                background: ${type === 'success' ? '#00b09b' : '#ff6b6b'}; color: white;
-                border-radius: 10px; z-index: 1000; animation: slideIn 0.3s ease;
-                font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            `;
-            document.body.appendChild(notification);
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-
-        // ==================== INITIALISATION ====================
-        function setupEventListeners() {
-            document.querySelectorAll('.btn').forEach(btn => {
-                btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.95)');
-                btn.addEventListener('mouseup', () => btn.style.transform = '');
-                btn.addEventListener('mouseleave', () => btn.style.transform = '');
-            });
-
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentFilter = btn.dataset.filter;
-                    updateHistoryDisplay();
-                });
-            });
-        }
-
-        function initApp() {
-            loadSavedTheme();
-            initializeChart();
-            loadInitialState();
-            startAutoRefresh();
-            setupEventListeners();
-
-            document.getElementById('deviceBadge').innerHTML = getDeviceType();
-            document.getElementById('btnOn').onclick = () => sendCommand(1);
-            document.getElementById('btnOff').onclick = () => sendCommand(0);
-            document.getElementById('themeToggle').onclick = toggleTheme;
-            document.getElementById('logoutBtn').onclick = logout;
-            document.getElementById('infoBtn').onclick = showDescription;
-            document.getElementById('backBtn').onclick = showDashboard;
-            document.getElementById('refreshBtn').onclick = () => { loadHistory(); showNotification('Historique actualisé', 'success'); };
-            document.getElementById('exportBtn').onclick = exportCSV;
-        }
-
-        document.getElementById('loginBtn').onclick = login;
-        document.getElementById('passwordInput').onkeypress = (e) => {
-            if (e.key === 'Enter') login();
-        };
-    </script>
-</body>
-
-</html>
+                        backgroundColor: isDarkTheme ? 'rgba(255, 170, 0, 0.2)' : 'rgba(255, 170, 0, 0
