@@ -6,9 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>🔧 PROJET IoT - Commande Moteur</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -26,7 +24,6 @@
             padding: 20px;
         }
 
-        /* Thème clair */
         body.light-theme {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
@@ -37,25 +34,12 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
 
-        body.light-theme .status-card {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-        }
-
-        body.light-theme .history-item {
-            background: #f8f9fa;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
+        body.light-theme .status-card,
+        body.light-theme .stats-card,
         body.light-theme .info-item {
             background: #f8f9fa;
         }
 
-        body.light-theme .stats-card {
-            background: #f8f9fa;
-        }
-
-        /* Thème sombre */
         body.dark-theme {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #e0e0e0;
@@ -66,23 +50,10 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        body.dark-theme .status-card {
-            background: #2a2a3a;
-            border: 1px solid #3a3a4a;
-        }
-
-        body.dark-theme .history-item {
-            background: #2a2a3a;
-            border-bottom: 1px solid #3a3a4a;
-        }
-
+        body.dark-theme .status-card,
+        body.dark-theme .stats-card,
         body.dark-theme .info-item {
             background: #2a2a3a;
-        }
-
-        body.dark-theme .stats-card {
-            background: #2a2a3a;
-            border: 1px solid #3a3a4a;
         }
 
         .container {
@@ -90,10 +61,8 @@
             width: 100%;
             border-radius: 20px;
             padding: 20px;
-            transition: all 0.3s ease;
         }
 
-        /* Login Container */
         .login-container {
             max-width: 400px;
             margin: 0 auto;
@@ -143,20 +112,13 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .login-box button:hover {
-            transform: scale(1.02);
         }
 
         .error-msg {
             color: #ff6b6b;
             margin-top: 15px;
-            font-size: 14px;
         }
 
-        /* Dashboard */
         .dashboard {
             display: none;
         }
@@ -177,8 +139,6 @@
             background: rgba(255, 170, 0, 0.2);
             padding: 4px 12px;
             border-radius: 20px;
-            display: inline-block;
-            margin-left: 10px;
         }
 
         .header-buttons {
@@ -235,7 +195,6 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            transition: all 0.3s;
         }
 
         .led-on {
@@ -246,7 +205,6 @@
 
         .led-off {
             background: radial-gradient(circle at 30% 30%, #666, #333);
-            box-shadow: none;
         }
 
         @keyframes pulse {
@@ -281,29 +239,20 @@
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.1s, opacity 0.3s;
         }
 
         .btn:active {
             transform: scale(0.95);
         }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         .btn-on {
             background: #00b09b;
             color: white;
-            box-shadow: 0 5px 15px rgba(0, 176, 155, 0.3);
         }
 
         .btn-off {
             background: #ff6b6b;
             color: white;
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
         }
 
         .info-grid {
@@ -316,7 +265,6 @@
         .info-item {
             text-align: center;
             padding: 10px;
-            background: rgba(255, 170, 0, 0.1);
             border-radius: 10px;
         }
 
@@ -342,10 +290,6 @@
             display: flex;
             justify-content: space-around;
             margin-top: 10px;
-        }
-
-        .stat {
-            text-align: center;
         }
 
         .stat-number {
@@ -400,29 +344,23 @@
             padding: 10px;
             border-radius: 8px;
             margin-bottom: 5px;
-        }
-
-        .history-command {
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            background: rgba(255, 170, 0, 0.05);
         }
 
         .history-command.on {
             color: #00b09b;
+            font-weight: bold;
         }
 
         .history-command.off {
             color: #ff6b6b;
+            font-weight: bold;
         }
 
         .history-device {
             font-size: 10px;
             opacity: 0.6;
-            background: rgba(0, 0, 0, 0.1);
-            padding: 2px 6px;
-            border-radius: 10px;
+            margin-left: 8px;
         }
 
         .chart-container {
@@ -430,12 +368,12 @@
             height: 200px;
         }
 
+        .sync-status,
         .connection-status {
             text-align: center;
-            font-size: 12px;
-            margin-top: 15px;
-            padding: 5px;
-            border-radius: 5px;
+            font-size: 11px;
+            margin-top: 10px;
+            opacity: 0.7;
         }
 
         .loading {
@@ -478,66 +416,9 @@
             }
         }
 
-        .sync-status {
-            font-size: 10px;
-            text-align: center;
-            margin-top: 5px;
-            opacity: 0.7;
-        }
-
-        /* Style pour l'export PDF */
-        .pdf-export-content {
-            padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .pdf-export-content h1 {
-            color: #ffaa00;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .pdf-export-content .pdf-stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .pdf-export-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        .pdf-export-content th,
-        .pdf-export-content td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .pdf-export-content th {
-            background: #ffaa00;
-            color: #333;
-        }
-
-        .pdf-footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 12px;
-            color: #666;
-        }
-
         @media (max-width: 500px) {
             .info-grid {
                 grid-template-columns: repeat(2, 1fr);
-            }
-
-            .header-buttons {
-                margin-top: 10px;
             }
 
             .control-buttons {
@@ -552,32 +433,24 @@
 </head>
 
 <body class="dark-theme">
-    <!-- Login Container -->
     <div class="container login-container" id="loginContainer">
         <div class="login-box">
             <h2>🔐 Accès sécurisé</h2>
-            <input type="password" id="passwordInput" placeholder="Entrez le mot de passe" autocomplete="off">
+            <input type="password" id="passwordInput" placeholder="Mot de passe" autocomplete="off">
             <button id="loginBtn">Se connecter</button>
             <div class="error-msg" id="loginError"></div>
         </div>
     </div>
 
-    <!-- Dashboard -->
     <div class="container dashboard" id="dashboard">
-        <h1>
-            🔧 PROJET IoT
-            <span class="welcome-badge" id="deviceBadge">💻</span>
-        </h1>
+        <h1>🔧 PROJET IoT <span class="welcome-badge" id="deviceBadge">💻</span></h1>
 
         <div class="header-buttons">
             <button class="refresh-btn" id="refreshBtn">🔄 Rafraîchir</button>
             <button class="export-btn" id="exportBtn">📥 CSV</button>
             <button class="pdf-btn" id="pdfBtn">📄 PDF</button>
-            <button class="info-btn" id="infoBtn">ℹ️ Description</button>
-            <button class="theme-btn" id="themeToggle">
-                <span class="theme-icon">☀️</span>
-                <span class="theme-text">Mode clair</span>
-            </button>
+            <button class="info-btn" id="infoBtn">ℹ️ Info</button>
+            <button class="theme-btn" id="themeToggle">☀️ Mode clair</button>
             <button class="logout-btn" id="logoutBtn">🚪 Déconnexion</button>
         </div>
 
@@ -587,7 +460,7 @@
                 <div class="led led-off" id="led"></div>
                 <span id="ledStatus" style="font-size: 18px; font-weight: bold;">---</span>
             </div>
-            <div class="runtime" id="runtimeDisplay">⏱️ Temps de fonctionnement: --</div>
+            <div class="runtime" id="runtimeDisplay">⏱️ Temps: --</div>
         </div>
 
         <div class="control-buttons">
@@ -601,17 +474,17 @@
                 <div class="info-value" id="lastCommand">-</div>
             </div>
             <div class="info-item">
-                <div class="info-label">Statut connexion</div>
+                <div class="info-label">Connexion</div>
                 <div class="info-value" id="connectionStatus">OK</div>
             </div>
             <div class="info-item">
-                <div class="info-label">Commandes aujourd'hui</div>
+                <div class="info-label">Aujourd'hui</div>
                 <div class="info-value" id="todayCount">0</div>
             </div>
         </div>
 
         <div class="stats-card">
-            <h4>📊 Statistiques par appareil</h4>
+            <h4>📊 Statistiques</h4>
             <div class="stats-row">
                 <div class="stat">
                     <div class="stat-number" id="pcCount">0</div>
@@ -628,46 +501,36 @@
             </div>
         </div>
 
-        <div class="chart-container">
-            <canvas id="commandChart"></canvas>
-        </div>
+        <div class="chart-container"><canvas id="commandChart"></canvas></div>
 
         <div class="history-section">
-            <h3>
-                📜 Historique des commandes
+            <h3>📜 Historique
                 <div class="filter-buttons">
                     <button class="filter-btn active" data-filter="all">Tous</button>
-                    <button class="filter-btn" data-filter="on">🟢 MARCHE</button>
-                    <button class="filter-btn" data-filter="off">🔴 ARRÊT</button>
+                    <button class="filter-btn" data-filter="on">MARCHE</button>
+                    <button class="filter-btn" data-filter="off">ARRÊT</button>
                 </div>
             </h3>
             <div class="history-list" id="historyList">
-                <div style="text-align: center; padding: 20px;">Chargement...</div>
+                <div style="text-align:center;padding:20px;">Chargement...</div>
             </div>
-            <div class="sync-status" id="syncStatus">🔄 Synchronisation en cours...</div>
+            <div class="sync-status" id="syncStatus">🔄 Synchronisation...</div>
         </div>
-
-        <div class="connection-status">
-            🔌 Connecté à ThingSpeak | Synchronisation multi-appareils
-        </div>
+        <div class="connection-status">🔌 Connecté à ThingSpeak</div>
     </div>
 
-    <!-- Page Description -->
-    <div class="description-page"
-        style="display: none; max-width: 500px; width: 100%; border-radius: 20px; padding: 20px;" id="descriptionPage">
-        <div class="description-card"
-            style="background: rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; text-align: center;">
-            <h2 style="color: #ffaa00;">📖 À propos du projet</h2>
-            <p>Projet IoT par <strong>Ir DIAMONEKA VAKANDA Jonathan</strong></p>
-            <p>Contrôle à distance d'un moteur via ThingSpeak</p>
-            <button class="back-btn" id="backBtn"
+    <div style="display:none; max-width:500px; width:100%; border-radius:20px; padding:20px;" id="descriptionPage">
+        <div style="background:rgba(255,255,255,0.1); border-radius:20px; padding:30px; text-align:center;">
+            <h2 style="color:#ffaa00;">📖 Projet IoT</h2>
+            <p>Par <strong>Ir DIAMONEKA VAKANDA Jonathan</strong></p>
+            <p>Contrôle moteur à distance via ThingSpeak</p>
+            <button id="backBtn"
                 style="background:#ffaa00; border:none; padding:12px 30px; border-radius:10px; margin-top:20px; cursor:pointer;">←
                 Retour</button>
         </div>
     </div>
 
     <script>
-        // ==================== AUTHENTIFICATION ====================
         const VALID_PASSWORD = "Admin1234";
 
         if (sessionStorage.getItem('loggedIn') === 'true') {
@@ -678,373 +541,219 @@
         } else {
             document.getElementById('loginContainer').style.display = 'flex';
             document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('descriptionPage').style.display = 'none';
         }
 
         function login() {
-            const password = document.getElementById('passwordInput').value;
-            const errorDiv = document.getElementById('loginError');
-
-            if (password === VALID_PASSWORD) {
+            const pwd = document.getElementById('passwordInput').value;
+            if (pwd === VALID_PASSWORD) {
                 sessionStorage.setItem('loggedIn', 'true');
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
-                document.getElementById('descriptionPage').style.display = 'none';
-                errorDiv.textContent = '';
+                document.getElementById('loginError').textContent = '';
                 initApp();
             } else {
-                errorDiv.textContent = 'Mot de passe incorrect';
+                document.getElementById('loginError').textContent = 'Mot de passe incorrect';
                 document.getElementById('passwordInput').value = '';
             }
         }
 
-        function logout() {
-            sessionStorage.removeItem('loggedIn');
-            location.reload();
-        }
+        function logout() { sessionStorage.removeItem('loggedIn'); location.reload(); }
+        function showDashboard() { document.getElementById('dashboard').style.display = 'block'; document.getElementById('descriptionPage').style.display = 'none'; }
+        function showDescription() { document.getElementById('dashboard').style.display = 'none'; document.getElementById('descriptionPage').style.display = 'block'; }
 
-        function showDashboard() {
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('descriptionPage').style.display = 'none';
-        }
-
-        function showDescription() {
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('descriptionPage').style.display = 'block';
-        }
-
-        // ==================== CONFIGURATION ====================
         const CONFIG = {
             channelId: '3295988',
             writeApiKey: '10JCZMPJ1E41POZS',
             readApiKey: 'QJVJO9L6RIRUKS1U',
-            refreshInterval: 5000,
-            maxHistoryItems: 50
+            refreshInterval: 5000
         };
 
-        function getDeviceType() {
-            const userAgent = navigator.userAgent.toLowerCase();
-            if (/mobile|android|iphone|ipad|phone/.test(userAgent)) {
-                return "📱 Mobile";
-            }
-            return "💻 PC";
-        }
+        function getDeviceType() { return /mobile|android|iphone/i.test(navigator.userAgent.toLowerCase()) ? "📱 Mobile" : "💻 PC"; }
+        function vibrate() { if (navigator.vibrate) navigator.vibrate(50); }
 
-        function vibrate() {
-            if (navigator.vibrate) {
-                navigator.vibrate(50);
-            }
-        }
+        let currentLedState = 0, commandHistory = [], chart = null, refreshInterval = null, motorStartTime = null, currentFilter = "all";
+        let pcCount = 0, mobileCount = 0, totalCount = 0, todayCount = 0;
 
-        // ==================== ÉTAT GLOBAL ====================
-        let currentLedState = 0;
-        let commandHistory = [];
-        let chart = null;
-        let refreshInterval = null;
-        let motorStartTime = null;
-        let currentFilter = "all";
-        let pcCommands = 0, mobileCommands = 0, totalCommands = 0, todayCommands = 0;
-
-        // ==================== TEMPS DE FONCTIONNEMENT ====================
         function updateRuntimeDisplay() {
             const runtimeDisplay = document.getElementById('runtimeDisplay');
             if (currentLedState === 1) {
                 if (!motorStartTime) motorStartTime = new Date();
                 const diff = Math.floor((new Date() - motorStartTime) / 1000);
-                const hours = Math.floor(diff / 3600);
-                const minutes = Math.floor((diff % 3600) / 60);
-                const seconds = diff % 60;
-                runtimeDisplay.innerHTML = `⏱️ Temps de fonctionnement: ${hours}h ${minutes}m ${seconds}s`;
+                const h = Math.floor(diff / 3600), m = Math.floor((diff % 3600) / 60), s = diff % 60;
+                runtimeDisplay.innerHTML = `⏱️ Fonctionnement: ${h}h ${m}m ${s}s`;
             } else {
                 motorStartTime = null;
-                runtimeDisplay.innerHTML = `⏱️ Temps de fonctionnement: Moteur éteint`;
+                runtimeDisplay.innerHTML = `⏱️ Moteur éteint`;
             }
         }
-
         setInterval(updateRuntimeDisplay, 1000);
 
-        // ==================== ENVOI COMMANDE ====================
         async function sendCommand(value) {
-            setButtonsDisabled(true);
             const device = getDeviceType();
-            const timestamp = new Date().toISOString();
-
             document.getElementById('lastCommand').textContent = value === 1 ? 'MARCHE' : 'ARRÊT';
             document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('fr-FR');
-            showLoading(true);
             vibrate();
-
             try {
-                const url = `https://api.thingspeak.com/update?api_key=${CONFIG.writeApiKey}&field1=${value}&field2=${encodeURIComponent(device)}&field3=${encodeURIComponent(timestamp)}`;
-                const response = await fetch(url);
-                const result = await response.text();
-
-                if (response.ok && result !== '0') {
-                    showNotification(`Commande ${value === 1 ? 'MARCHE' : 'ARRÊT'} depuis ${device} !`, 'success');
-                    setTimeout(() => readLEDState(), 2000);
-                    setTimeout(() => loadHistory(), 3000);
-                } else {
-                    throw new Error('Échec de l\'envoi');
-                }
-            } catch (error) {
-                showNotification('Erreur de communication', 'error');
-                document.getElementById('connectionStatus').textContent = 'ERREUR';
-            } finally {
-                showLoading(false);
-                setTimeout(() => {
-                    setButtonsDisabled(false);
-                    document.getElementById('connectionStatus').textContent = 'OK';
-                }, 5000);
-            }
+                const url = `https://api.thingspeak.com/update?api_key=${CONFIG.writeApiKey}&field1=${value}&field2=${encodeURIComponent(device)}&field3=${new Date().toISOString()}`;
+                await fetch(url);
+                showNotification(`Commande ${value === 1 ? 'MARCHE' : 'ARRÊT'} depuis ${device}`, 'success');
+                setTimeout(() => { readLEDState(); loadHistory(); }, 2000);
+            } catch (e) { showNotification('Erreur', 'error'); }
         }
 
-        // ==================== CHARGEMENT HISTORIQUE ====================
         async function loadHistory() {
             try {
                 const url = `https://api.thingspeak.com/channels/${CONFIG.channelId}/feeds.json?api_key=${CONFIG.readApiKey}&results=50`;
-                const response = await fetch(url);
-                const data = await response.json();
-
-                pcCommands = 0;
-                mobileCommands = 0;
-                todayCommands = 0;
+                const data = await (await fetch(url)).json();
+                pcCount = 0; mobileCount = 0; todayCount = 0;
                 const today = new Date().toDateString();
-
-                if (data.feeds && data.feeds.length > 0) {
-                    const historyData = [];
+                const history = [];
+                if (data.feeds) {
                     for (let i = data.feeds.length - 1; i >= 0; i--) {
-                        const feed = data.feeds[i];
-                        if (feed.field1 !== null && feed.field1 !== "") {
-                            const value = parseInt(feed.field1);
-                            const device = feed.field2 || "Appareil inconnu";
-                            const time = new Date(feed.created_at);
-
-                            if (device.includes("PC")) pcCommands++;
-                            else if (device.includes("Mobile")) mobileCommands++;
-
-                            if (time.toDateString() === today) todayCommands++;
-
-                            historyData.push({
-                                value: value,
-                                time: time,
-                                device: device
-                            });
+                        const f = data.feeds[i];
+                        if (f.field1 !== null && f.field1 !== "") {
+                            const val = parseInt(f.field1);
+                            const dev = f.field2 || "Inconnu";
+                            const time = new Date(f.created_at);
+                            if (dev.includes("PC")) pcCount++;
+                            else if (dev.includes("Mobile")) mobileCount++;
+                            if (time.toDateString() === today) todayCount++;
+                            history.push({ value: val, time: time, device: dev });
                         }
                     }
-
-                    commandHistory = historyData.slice(0, CONFIG.maxHistoryItems);
-                    totalCommands = pcCommands + mobileCommands;
-
-                    updateHistoryDisplay();
-                    document.getElementById('pcCount').textContent = pcCommands;
-                    document.getElementById('mobileCount').textContent = mobileCommands;
-                    document.getElementById('totalCommands').textContent = totalCommands;
-                    document.getElementById('todayCount').textContent = todayCommands;
-                    document.getElementById('syncStatus').innerHTML = '✅ Synchronisé avec ThingSpeak';
-                    setTimeout(() => {
-                        document.getElementById('syncStatus').innerHTML = '🔄 Synchronisation automatique';
-                    }, 3000);
                 }
-            } catch (error) {
-                console.error('Erreur chargement historique:', error);
-                document.getElementById('syncStatus').innerHTML = '⚠️ Erreur de synchronisation';
-            }
+                commandHistory = history.slice(0, 50);
+                totalCount = pcCount + mobileCount;
+                document.getElementById('pcCount').textContent = pcCount;
+                document.getElementById('mobileCount').textContent = mobileCount;
+                document.getElementById('totalCommands').textContent = totalCount;
+                document.getElementById('todayCount').textContent = todayCount;
+                updateHistoryDisplay();
+                document.getElementById('syncStatus').innerHTML = '✅ Synchronisé';
+                setTimeout(() => document.getElementById('syncStatus').innerHTML = '🔄 Auto-sync', 3000);
+            } catch (e) { console.error(e); }
         }
 
         function updateHistoryDisplay() {
-            const historyList = document.getElementById('historyList');
-            let filteredHistory = commandHistory;
-
-            if (currentFilter === "on") {
-                filteredHistory = commandHistory.filter(item => item.value === 1);
-            } else if (currentFilter === "off") {
-                filteredHistory = commandHistory.filter(item => item.value === 0);
-            }
-
-            if (filteredHistory.length === 0) {
-                historyList.innerHTML = '<div style="text-align: center; padding: 20px;">Aucune commande</div>';
-                return;
-            }
-
-            historyList.innerHTML = filteredHistory.map(item => `
-                <div class="history-item">
-                    <span class="history-command ${item.value === 1 ? 'on' : 'off'}">
-                        ${item.value === 1 ? '🟢 MARCHE' : '🔴 ARRÊT'}
-                        <span class="history-device">${item.device || '📱'}</span>
-                    </span>
-                    <span>${item.time.toLocaleTimeString('fr-FR')}</span>
-                </div>
-            `).join('');
+            let filtered = commandHistory;
+            if (currentFilter === "on") filtered = commandHistory.filter(i => i.value === 1);
+            if (currentFilter === "off") filtered = commandHistory.filter(i => i.value === 0);
+            const list = document.getElementById('historyList');
+            if (filtered.length === 0) { list.innerHTML = '<div style="text-align:center;padding:20px;">Aucune commande</div>'; return; }
+            list.innerHTML = filtered.map(i => `<div class="history-item"><span class="history-command ${i.value === 1 ? 'on' : 'off'}">${i.value === 1 ? '🟢 MARCHE' : '🔴 ARRÊT'}<span class="history-device">${i.device}</span></span><span>${i.time.toLocaleTimeString('fr-FR')}</span></div>`).join('');
         }
 
-        // ==================== EXPORT PDF ====================
         async function exportPDF() {
-            if (commandHistory.length === 0) {
-                showNotification('Aucune donnée à exporter', 'error');
-                return;
-            }
-
-            showNotification('Génération du PDF en cours...', 'success');
-
-            // Créer le contenu pour le PDF
-            const currentDate = new Date().toLocaleString('fr-FR');
-            const motorState = currentLedState === 1 ? 'MARCHE ✅' : 'ARRÊT ❌';
-
-            let tableRows = '';
-            commandHistory.forEach(item => {
-                tableRows += `
-                    <tr>
-                        <td>${item.time.toLocaleDateString('fr-FR')}</td>
-                        <td>${item.time.toLocaleTimeString('fr-FR')}</td>
-                        <td>${item.value === 1 ? 'MARCHE' : 'ARRÊT'}</td>
-                        <td>${item.device || 'Inconnu'}</td>
-                    </tr>
-                `;
-            });
-
-            const pdfContent = `
-                <div class="pdf-export-content">
-                    <h1>🔧 PROJET IoT - Rapport d'activité</h1>
-                    <p style="text-align:center; color:#666;">Généré le : ${currentDate}</p>
-                    
-                    <div class="pdf-stats">
-                        <div><strong>État moteur :</strong> ${motorState}</div>
-                        <div><strong>Commandes totales :</strong> ${totalCommands}</div>
-                        <div><strong>Commandes aujourd'hui :</strong> ${todayCommands}</div>
+            if (commandHistory.length === 0) { showNotification('Aucune donnée', 'error'); return; }
+            showNotification('Génération PDF...', 'success');
+            const date = new Date().toLocaleString('fr-FR');
+            let rows = '';
+            commandHistory.forEach(i => { rows += `<tr><td>${i.time.toLocaleDateString()}</td><td>${i.time.toLocaleTimeString()}</td><td>${i.value === 1 ? 'MARCHE' : 'ARRÊT'}</td><td>${i.device}</td></tr>`; });
+            const content = `
+                <div style="padding:20px; font-family:Segoe UI;">
+                    <h1 style="color:#ffaa00;">🔧 PROJET IoT - Rapport</h1>
+                    <p>Généré: ${date}</p>
+                    <div style="display:flex; justify-content:space-around; margin:20px 0; padding:15px; background:#f0f0f0; border-radius:10px;">
+                        <div><strong>État:</strong> ${currentLedState === 1 ? 'MARCHE' : 'ARRÊT'}</div>
+                        <div><strong>Total:</strong> ${totalCount}</div>
+                        <div><strong>Aujourd'hui:</strong> ${todayCount}</div>
                     </div>
-                    
-                    <div class="pdf-stats">
-                        <div>💻 PC : ${pcCommands}</div>
-                        <div>📱 Mobile : ${mobileCommands}</div>
+                    <div style="display:flex; justify-content:space-around; margin:20px 0;">
+                        <div>💻 PC: ${pcCount}</div>
+                        <div>📱 Mobile: ${mobileCount}</div>
                     </div>
-                    
-                    <h3>📜 Historique des commandes</h3>
-                    <table>
-                        <thead>
-                            <tr><th>Date</th><th>Heure</th><th>Commande</th><th>Appareil</th></tr>
-                        </thead>
-                        <tbody>
-                            ${tableRows}
-                        </tbody>
+                    <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;">
+                        <tr style="background:#ffaa00;"><th>Date</th><th>Heure</th><th>Commande</th><th>Appareil</th></tr>
+                        ${rows}
                     </table>
-                    
-                    <div class="pdf-footer">
-                        <p>Projet IoT - Contrôle à distance via ThingSpeak</p>
-                        <p>Développé par Ir DIAMONEKA VAKANDA Jonathan</p>
-                    </div>
-                </div>
-            `;
-
-            // Options pour html2pdf
-            const element = document.createElement('div');
-            element.innerHTML = pdfContent;
-            element.style.position = 'absolute';
-            element.style.left = '-9999px';
-            document.body.appendChild(element);
-
-            const opt = {
-                margin: [0.5, 0.5, 0.5, 0.5],
-                filename: `rapport_moteur_${new Date().toISOString().slice(0, 19)}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, letterRendering: true },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(element).save().then(() => {
-                document.body.removeChild(element);
-                showNotification('PDF généré avec succès !', 'success');
-            }).catch(err => {
-                console.error('Erreur PDF:', err);
-                document.body.removeChild(element);
-                showNotification('Erreur lors de la génération du PDF', 'error');
-            });
+                    <p style="text-align:center; margin-top:30px; color:#666;">Projet IoT - Ir DIAMONEKA VAKANDA Jonathan</p>
+                </div>`;
+            const el = document.createElement('div'); el.innerHTML = content; el.style.position = 'absolute'; el.style.left = '-9999px'; document.body.appendChild(el);
+            html2pdf().set({ margin: 0.5, filename: `rapport_moteur_${new Date().toISOString().slice(0, 19)}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => { document.body.removeChild(el); showNotification('PDF généré !', 'success'); });
         }
 
-        // ==================== EXPORT CSV ====================
         function exportCSV() {
-            if (commandHistory.length === 0) {
-                showNotification('Aucune donnée à exporter', 'error');
-                return;
-            }
-
-            let csvContent = "Date,Heure,Commande,Appareil\n";
-            commandHistory.forEach(item => {
-                csvContent += `${item.time.toLocaleDateString('fr-FR')},${item.time.toLocaleTimeString('fr-FR')},${item.value === 1 ? 'MARCHE' : 'ARRÊT'},${item.device}\n`;
-            });
-
-            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `historique_moteur_${new Date().toISOString().slice(0, 19)}.csv`);
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            showNotification('Export CSV terminé !', 'success');
+            if (commandHistory.length === 0) { showNotification('Aucune donnée', 'error'); return; }
+            let csv = "Date,Heure,Commande,Appareil\n";
+            commandHistory.forEach(i => { csv += `${i.time.toLocaleDateString()},${i.time.toLocaleTimeString()},${i.value === 1 ? 'MARCHE' : 'ARRÊT'},${i.device}\n`; });
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv' });
+            const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `historique_${new Date().toISOString().slice(0, 19)}.csv`; link.click(); URL.revokeObjectURL(link.href);
+            showNotification('CSV exporté', 'success');
         }
 
-        // ==================== THÈME ====================
-        function toggleTheme() {
-            const body = document.body;
-            const themeIcon = document.querySelector('#themeToggle .theme-icon');
-            const themeText = document.querySelector('#themeToggle .theme-text');
-
-            if (body.classList.contains('dark-theme')) {
-                body.classList.remove('dark-theme');
-                body.classList.add('light-theme');
-                if (themeIcon) themeIcon.textContent = '🌙';
-                if (themeText) themeText.textContent = 'Mode sombre';
-                localStorage.setItem('theme', 'light');
-            } else {
-                body.classList.remove('light-theme');
-                body.classList.add('dark-theme');
-                if (themeIcon) themeIcon.textContent = '☀️';
-                if (themeText) themeText.textContent = 'Mode clair';
-                localStorage.setItem('theme', 'dark');
-            }
-
-            if (chart) {
-                const isDark = body.classList.contains('dark-theme');
-                chart.options.scales.y.grid.color = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-                chart.options.scales.y.ticks.color = isDark ? '#e0e0e0' : '#333';
-                chart.options.scales.x.grid.color = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-                chart.options.scales.x.ticks.color = isDark ? '#e0e0e0' : '#333';
-                chart.update();
-            }
+        async function readLEDState() {
+            try {
+                const url = `https://api.thingspeak.com/channels/${CONFIG.channelId}/fields/1/last.json?api_key=${CONFIG.readApiKey}`;
+                const data = await (await fetch(url)).json();
+                if (data.field1 !== undefined) updateLEDState(parseInt(data.field1));
+                document.getElementById('connectionStatus').textContent = 'OK';
+            } catch (e) { document.getElementById('connectionStatus').textContent = 'ERREUR'; }
         }
 
-        function loadSavedTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            const body = document.body;
-            const themeIcon = document.querySelector('#themeToggle .theme-icon');
-            const themeText = document.querySelector('#themeToggle .theme-text');
-
-            if (savedTheme === 'light') {
-                body.classList.add('light-theme');
-                body.classList.remove('dark-theme');
-                if (themeIcon) themeIcon.textContent = '🌙';
-                if (themeText) themeText.textContent = 'Mode sombre';
-            } else {
-                body.classList.add('dark-theme');
-                body.classList.remove('light-theme');
-                if (themeIcon) themeIcon.textContent = '☀️';
-                if (themeText) themeText.textContent = 'Mode clair';
-            }
+        function updateLEDState(value) {
+            currentLedState = value;
+            const led = document.getElementById('led'), status = document.getElementById('ledStatus');
+            if (value === 1) { led.className = 'led led-on'; status.textContent = 'MARCHE ✅'; }
+            else { led.className = 'led led-off'; status.textContent = 'ARRÊT ❌'; motorStartTime = null; }
+            if (chart) { chart.data.labels.push(new Date().toLocaleTimeString()); chart.data.datasets[0].data.push(value); if (chart.data.labels.length > 20) { chart.data.labels.shift(); chart.data.datasets[0].data.shift(); } chart.update(); }
         }
 
-        // ==================== CHART.JS ====================
-        function initializeChart() {
+        function initChart() {
             const ctx = document.getElementById('commandChart').getContext('2d');
-            const isDarkTheme = document.body.classList.contains('dark-theme');
-
+            const isDark = document.body.classList.contains('dark-theme');
             chart = new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'État du Moteur',
-                        data: [],
-                        borderColor: '#ffaa00',
-                        backgroundColor: isDarkTheme ? 'rgba(255, 170, 0, 0.2)' : 'rgba(255, 170, 0, 0
+                data: { labels: [], datasets: [{ label: 'État', data: [], borderColor: '#ffaa00', backgroundColor: isDark ? 'rgba(255,170,0,0.2)' : 'rgba(255,170,0,0.1)', fill: true, tension: 0.4 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 1, ticks: { callback: v => v === 1 ? 'MARCHE' : 'ARRÊT' } } } }
+            });
+        }
+
+        function toggleTheme() {
+            const body = document.body, btn = document.getElementById('themeToggle');
+            if (body.classList.contains('dark-theme')) { body.classList.remove('dark-theme'); body.classList.add('light-theme'); btn.innerHTML = '🌙 Mode sombre'; localStorage.setItem('theme', 'light'); }
+            else { body.classList.remove('light-theme'); body.classList.add('dark-theme'); btn.innerHTML = '☀️ Mode clair'; localStorage.setItem('theme', 'dark'); }
+            if (chart) { const isDark = body.classList.contains('dark-theme'); chart.options.scales.y.grid.color = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'; chart.options.scales.y.ticks.color = isDark ? '#e0e0e0' : '#333'; chart.update(); }
+        }
+
+        function loadTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'light') { document.body.classList.add('light-theme'); document.body.classList.remove('dark-theme'); document.getElementById('themeToggle').innerHTML = '🌙 Mode sombre'; }
+            else { document.body.classList.add('dark-theme'); document.body.classList.remove('light-theme'); document.getElementById('themeToggle').innerHTML = '☀️ Mode clair'; }
+        }
+
+        function showNotification(msg, type) {
+            const div = document.createElement('div');
+            div.textContent = msg;
+            div.style.cssText = `position:fixed; bottom:20px; right:20px; padding:12px 24px; background:${type === 'success' ? '#00b09b' : '#ff6b6b'}; color:white; border-radius:10px; z-index:1000; animation:slideIn 0.3s ease;`;
+            document.body.appendChild(div);
+            setTimeout(() => { div.style.animation = 'slideOut 0.3s ease'; setTimeout(() => div.remove(), 300); }, 3000);
+        }
+
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(async () => { await readLEDState(); await loadHistory(); }, CONFIG.refreshInterval);
+        }
+
+        function initApp() {
+            loadTheme(); initChart(); readLEDState(); loadHistory(); startAutoRefresh();
+            document.getElementById('deviceBadge').innerHTML = getDeviceType();
+            document.getElementById('btnOn').onclick = () => sendCommand(1);
+            document.getElementById('btnOff').onclick = () => sendCommand(0);
+            document.getElementById('themeToggle').onclick = toggleTheme;
+            document.getElementById('logoutBtn').onclick = logout;
+            document.getElementById('infoBtn').onclick = showDescription;
+            document.getElementById('backBtn').onclick = showDashboard;
+            document.getElementById('refreshBtn').onclick = () => { loadHistory(); showNotification('Actualisé', 'success'); };
+            document.getElementById('exportBtn').onclick = exportCSV;
+            document.getElementById('pdfBtn').onclick = exportPDF;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.onclick = () => { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentFilter = btn.dataset.filter; updateHistoryDisplay(); };
+            });
+        }
+
+        document.getElementById('loginBtn').onclick = login;
+        document.getElementById('passwordInput').onkeypress = e => { if (e.key === 'Enter') login(); };
+    </script>
+</body>
+
+</html>
