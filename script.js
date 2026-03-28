@@ -1,6 +1,7 @@
 // ==================== AUTHENTIFICATION ====================
 // 🔐 Mot de passe : Admin1234
-const PASSWORD_HASH = "d86f4d95037be50b8801738482fa0363c572d52ee4ffe588c40d939ae9f31170";
+// Ce hash a été généré pour "Admin1234"
+const PASSWORD_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
 
 // ==================== CONFIGURATION ====================
 const CONFIG = {
@@ -35,6 +36,8 @@ async function login() {
     }
 
     const hash = await hashPassword(password);
+    console.log("Hash saisi:", hash); // Pour déboguer
+    console.log("Hash attendu:", PASSWORD_HASH);
 
     if (hash === PASSWORD_HASH) {
         sessionStorage.setItem('iot_auth', 'true');
@@ -71,34 +74,40 @@ function checkSession() {
 }
 
 function showDashboard() {
-    document.getElementById('loginContainer').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
+    const loginContainer = document.getElementById('loginContainer');
+    const dashboard = document.getElementById('dashboard');
+    if (loginContainer) loginContainer.style.display = 'none';
+    if (dashboard) dashboard.style.display = 'block';
     initApp();
 }
 
 function showLogin() {
-    document.getElementById('loginContainer').style.display = 'flex';
-    document.getElementById('dashboard').style.display = 'none';
+    const loginContainer = document.getElementById('loginContainer');
+    const dashboard = document.getElementById('dashboard');
+    if (loginContainer) loginContainer.style.display = 'flex';
+    if (dashboard) dashboard.style.display = 'none';
 }
 
 // ==================== THÈME ====================
 function toggleTheme() {
     const body = document.body;
     const themeBtn = document.getElementById('themeToggle');
+    if (!themeBtn) return;
+
     const themeIcon = themeBtn.querySelector('.theme-icon');
     const themeText = themeBtn.querySelector('.theme-text');
 
     if (body.classList.contains('dark-theme')) {
         body.classList.remove('dark-theme');
         body.classList.add('light-theme');
-        themeIcon.textContent = '🌙';
-        themeText.textContent = 'Mode sombre';
+        if (themeIcon) themeIcon.textContent = '🌙';
+        if (themeText) themeText.textContent = 'Mode sombre';
         localStorage.setItem('theme', 'light');
     } else {
         body.classList.remove('light-theme');
         body.classList.add('dark-theme');
-        themeIcon.textContent = '☀️';
-        themeText.textContent = 'Mode clair';
+        if (themeIcon) themeIcon.textContent = '☀️';
+        if (themeText) themeText.textContent = 'Mode clair';
         localStorage.setItem('theme', 'dark');
     }
 
@@ -124,20 +133,22 @@ function loadSavedTheme() {
         if (savedTheme === 'light') {
             body.classList.add('light-theme');
             body.classList.remove('dark-theme');
-            themeIcon.textContent = '🌙';
-            themeText.textContent = 'Mode sombre';
+            if (themeIcon) themeIcon.textContent = '🌙';
+            if (themeText) themeText.textContent = 'Mode sombre';
         } else {
             body.classList.add('dark-theme');
             body.classList.remove('light-theme');
-            themeIcon.textContent = '☀️';
-            themeText.textContent = 'Mode clair';
+            if (themeIcon) themeIcon.textContent = '☀️';
+            if (themeText) themeText.textContent = 'Mode clair';
         }
     }
 }
 
 // ==================== CHART.JS ====================
 function initializeChart() {
-    const ctx = document.getElementById('commandChart').getContext('2d');
+    const ctx = document.getElementById('commandChart');
+    if (!ctx) return;
+
     const isDarkTheme = document.body.classList.contains('dark-theme');
 
     chart = new Chart(ctx, {
@@ -264,6 +275,8 @@ function addToHistory(value, fromRead = false) {
 
 function updateHistoryDisplay() {
     const historyList = document.getElementById('historyList');
+    if (!historyList) return;
+
     historyList.innerHTML = '';
 
     if (commandHistory.length === 0) {
@@ -325,29 +338,28 @@ async function loadInitialState() {
 }
 
 function setupEventListeners() {
-    // Boutons de commande
-    document.getElementById('btnOn').addEventListener('click', () => sendCommand(1));
-    document.getElementById('btnOff').addEventListener('click', () => sendCommand(0));
+    const btnOn = document.getElementById('btnOn');
+    const btnOff = document.getElementById('btnOff');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const themeToggle = document.getElementById('themeToggle');
+    const passwordInput = document.getElementById('passwordInput');
 
-    // Bouton de connexion
-    document.getElementById('loginBtn').addEventListener('click', login);
+    if (btnOn) btnOn.addEventListener('click', () => sendCommand(1));
+    if (btnOff) btnOff.addEventListener('click', () => sendCommand(0));
+    if (loginBtn) loginBtn.addEventListener('click', login);
+    if (logoutBtn) logoutBtn.addEventListener('click', logout);
+    if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+    if (passwordInput) {
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+    }
 
-    // Bouton de déconnexion
-    document.getElementById('logoutBtn').addEventListener('click', logout);
-
-    // Bouton thème
-    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-    // Animation des boutons
     document.querySelectorAll('.btn').forEach(btn => {
         btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.95)');
         btn.addEventListener('mouseup', () => btn.style.transform = '');
         btn.addEventListener('mouseleave', () => btn.style.transform = '');
-    });
-
-    // Entrée pour valider le mot de passe
-    document.getElementById('passwordInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') login();
     });
 }
 
