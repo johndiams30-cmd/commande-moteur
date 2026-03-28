@@ -1,7 +1,7 @@
 // ==================== AUTHENTIFICATION ====================
 // 🔐 Mot de passe : Admin1234
-// Ce hash a été généré pour "Admin1234"
-const PASSWORD_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
+// Ce hash a été généré pour "admin"
+const PASSWORD_HASH = "fc8252c8dc55839967c58b9ad755a59b61b67c13227ddae4bd3f78a38bf394f7";
 
 // ==================== CONFIGURATION ====================
 const CONFIG = {
