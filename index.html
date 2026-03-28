@@ -24,7 +24,6 @@
             padding: 20px;
         }
 
-        /* Thème clair */
         body.light-theme {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
@@ -45,7 +44,6 @@
             border-bottom: 1px solid #e0e0e0;
         }
 
-        /* Thème sombre */
         body.dark-theme {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #e0e0e0;
@@ -74,7 +72,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Login Container */
         .login-container {
             max-width: 400px;
             margin: 0 auto;
@@ -137,7 +134,6 @@
             font-size: 14px;
         }
 
-        /* Dashboard */
         .dashboard {
             display: none;
         }
@@ -433,9 +429,9 @@
     <script>
         // ==================== AUTHENTIFICATION ====================
         // 🔐 Mot de passe : Admin1234
-        // Hash SHA-256 généré le 28/03/2026
+        // Hash SHA-256 correct : d86f4d95037be50b8801738482fa0363c572d52ee4ffe588c40d939ae9f31170
         const AUTH_CONFIG = {
-            passwordHash: "c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd2"
+            passwordHash: "d86f4d95037be50b8801738482fa0363c572d52ee4ffe588c40d939ae9f31170"
         };
 
         class AuthManager {
@@ -462,7 +458,6 @@
                 const hash = await this.hashPassword(password);
 
                 if (hash === AUTH_CONFIG.passwordHash) {
-                    // Authentification réussie
                     sessionStorage.setItem('iot_auth', 'true');
                     sessionStorage.setItem('iot_auth_time', Date.now().toString());
                     this.showDashboard();
@@ -481,7 +476,6 @@
 
                 if (auth === 'true' && authTime) {
                     const timeDiff = Date.now() - parseInt(authTime);
-                    // Session expire après 24 heures
                     if (timeDiff < 24 * 60 * 60 * 1000) {
                         this.showDashboard();
                         return;
@@ -493,7 +487,6 @@
             showDashboard() {
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
-                // Initialiser l'application après authentification
                 if (typeof initializeApp === 'function') {
                     initializeApp();
                 }
@@ -510,7 +503,6 @@
                 sessionStorage.removeItem('iot_auth');
                 sessionStorage.removeItem('iot_auth_time');
                 this.showLogin();
-                // Réinitialiser l'état
                 if (typeof resetApp === 'function') {
                     resetApp();
                 }
@@ -519,7 +511,6 @@
 
         // ==================== APPLICATION PRINCIPALE ====================
 
-        // === CONFIGURATION ===
         const CONFIG = {
             channelId: '3295988',
             writeApiKey: '10JCZMPJ1E41POZS',
@@ -528,14 +519,11 @@
             maxHistoryItems: 20
         };
 
-        // === ÉTAT DE L'APPLICATION ===
         let currentLedState = 0;
         let commandHistory = [];
-        let lastUpdateTime = null;
         let chart = null;
         let refreshInterval = null;
 
-        // === GESTION DU THÈME ===
         function toggleTheme() {
             const body = document.body;
             const themeBtn = document.getElementById('themeToggle');
@@ -555,7 +543,6 @@
                     chart.options.scales.x.ticks.color = '#333';
                     chart.update();
                 }
-
                 localStorage.setItem('theme', 'light');
             } else {
                 body.classList.remove('light-theme');
@@ -570,7 +557,6 @@
                     chart.options.scales.x.ticks.color = '#e0e0e0';
                     chart.update();
                 }
-
                 localStorage.setItem('theme', 'dark');
             }
         }
@@ -598,7 +584,6 @@
             }
         }
 
-        // === CHART.JS INITIALIZATION ===
         function initializeChart() {
             const ctx = document.getElementById('commandChart').getContext('2d');
             const isDarkTheme = document.body.classList.contains('dark-theme');
@@ -619,80 +604,52 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
                         y: {
                             beginAtZero: true,
                             max: 1,
-                            grid: {
-                                color: isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
-                            },
+                            grid: { color: isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' },
                             ticks: {
                                 stepSize: 1,
                                 color: isDarkTheme ? '#e0e0e0' : '#333',
-                                callback: function (value) {
-                                    return value === 1 ? 'MARCHE' : 'ARRÊT';
-                                }
+                                callback: (value) => value === 1 ? 'MARCHE' : 'ARRÊT'
                             }
                         },
                         x: {
-                            grid: {
-                                color: isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
-                            },
-                            ticks: {
-                                color: isDarkTheme ? '#e0e0e0' : '#333'
-                            }
+                            grid: { color: isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' },
+                            ticks: { color: isDarkTheme ? '#e0e0e0' : '#333' }
                         }
                     }
                 }
             });
         }
 
-        // === CHARGEMENT DE L'ÉTAT INITIAL ===
         async function loadInitialState() {
             await readLEDState();
             updateHistoryDisplay();
         }
 
-        // === RAFRAÎCHISSEMENT AUTOMATIQUE ===
         function startAutoRefresh() {
             if (refreshInterval) clearInterval(refreshInterval);
             refreshInterval = setInterval(async () => {
                 await readLEDState();
-                document.getElementById('refreshTime').textContent =
-                    new Date().toLocaleTimeString('fr-FR');
+                document.getElementById('refreshTime').textContent = new Date().toLocaleTimeString('fr-FR');
             }, CONFIG.refreshInterval);
         }
 
-        // === ÉCOUTEURS D'ÉVÉNEMENTS ===
         function setupEventListeners() {
-            const buttons = document.querySelectorAll('.btn');
-            buttons.forEach(btn => {
-                btn.addEventListener('mousedown', () => {
-                    btn.style.transform = 'scale(0.95)';
-                });
-                btn.addEventListener('mouseup', () => {
-                    btn.style.transform = '';
-                });
-                btn.addEventListener('mouseleave', () => {
-                    btn.style.transform = '';
-                });
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.95)');
+                btn.addEventListener('mouseup', () => btn.style.transform = '');
+                btn.addEventListener('mouseleave', () => btn.style.transform = '');
             });
         }
 
-        // === ENVOI D'UNE COMMANDE ===
         async function sendCommand(value) {
             setButtonsDisabled(true);
-
-            document.getElementById('lastCommand').textContent =
-                value === 1 ? 'MARCHE' : 'ARRÊT';
-            document.getElementById('lastUpdate').textContent =
-                new Date().toLocaleTimeString('fr-FR');
-
+            document.getElementById('lastCommand').textContent = value === 1 ? 'MARCHE' : 'ARRÊT';
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('fr-FR');
             showLoading(true);
 
             try {
@@ -701,20 +658,14 @@
                 const result = await response.text();
 
                 if (response.ok && result !== '0') {
-                    console.log('Commande envoyée avec succès:', value);
                     addToHistory(value);
                     updateLEDState(value);
-
-                    setTimeout(async () => {
-                        await readLEDState();
-                    }, 5000);
-
+                    setTimeout(() => readLEDState(), 5000);
                     showNotification('Commande envoyée avec succès !', 'success');
                 } else {
                     throw new Error('Échec de l\'envoi');
                 }
             } catch (error) {
-                console.error('Erreur:', error);
                 showNotification('Erreur de communication avec ThingSpeak', 'error');
                 document.getElementById('connectionStatus').textContent = 'ERREUR';
             } finally {
@@ -726,7 +677,6 @@
             }
         }
 
-        // === LECTURE DE L'ÉTAT ===
         async function readLEDState() {
             try {
                 const url = `https://api.thingspeak.com/channels/${CONFIG.channelId}/fields/1/last.json?api_key=${CONFIG.readApiKey}`;
@@ -734,18 +684,15 @@
                 const data = await response.json();
 
                 if (data.field1 !== undefined) {
-                    const value = parseInt(data.field1);
-                    updateLEDState(value);
-                    addToHistory(value, true);
+                    updateLEDState(parseInt(data.field1));
+                    addToHistory(parseInt(data.field1), true);
                     document.getElementById('connectionStatus').textContent = 'OK';
                 }
             } catch (error) {
-                console.error('Erreur de lecture:', error);
                 document.getElementById('connectionStatus').textContent = 'ERREUR';
             }
         }
 
-        // === MISE À JOUR DE L'UI ===
         function updateLEDState(value) {
             const led = document.getElementById('led');
             const ledStatus = document.getElementById('ledStatus');
@@ -759,73 +706,48 @@
                 ledStatus.textContent = 'ARRÊT';
                 currentLedState = 0;
             }
-
             updateChart();
         }
 
-        // === AJOUT À L'HISTORIQUE ===
         function addToHistory(value, fromRead = false) {
-            const timestamp = new Date();
-            const historyItem = {
-                value: value,
-                time: timestamp,
-                source: fromRead ? 'lecture' : 'commande'
-            };
-
-            commandHistory.unshift(historyItem);
-
-            if (commandHistory.length > CONFIG.maxHistoryItems) {
-                commandHistory.pop();
-            }
-
+            commandHistory.unshift({ value, time: new Date(), source: fromRead ? 'lecture' : 'commande' });
+            if (commandHistory.length > CONFIG.maxHistoryItems) commandHistory.pop();
             updateHistoryDisplay();
         }
 
-        // === MISE À JOUR DE L'AFFICHAGE HISTORIQUE ===
         function updateHistoryDisplay() {
             const historyList = document.getElementById('historyList');
             historyList.innerHTML = '';
-
             if (commandHistory.length === 0) {
                 historyList.innerHTML = '<div style="text-align: center; padding: 20px;">Aucune commande</div>';
                 return;
             }
-
             commandHistory.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'history-item';
-
                 const commandSpan = document.createElement('span');
                 commandSpan.className = `history-command ${item.value === 1 ? 'on' : 'off'}`;
                 commandSpan.textContent = item.value === 1 ? 'MARCHE' : 'ARRÊT';
-
                 const timeSpan = document.createElement('span');
                 timeSpan.className = 'history-time';
                 timeSpan.textContent = item.time.toLocaleTimeString('fr-FR');
-
                 div.appendChild(commandSpan);
                 div.appendChild(timeSpan);
                 historyList.appendChild(div);
             });
         }
 
-        // === MISE À JOUR DU GRAPHIQUE ===
         function updateChart() {
             if (!chart) return;
-
-            const now = new Date();
-            chart.data.labels.push(now.toLocaleTimeString('fr-FR'));
+            chart.data.labels.push(new Date().toLocaleTimeString('fr-FR'));
             chart.data.datasets[0].data.push(currentLedState);
-
             if (chart.data.labels.length > 20) {
                 chart.data.labels.shift();
                 chart.data.datasets[0].data.shift();
             }
-
             chart.update();
         }
 
-        // === UTILITAIRES UI ===
         function setButtonsDisabled(disabled) {
             const btnOn = document.getElementById('btnOn');
             const btnOff = document.getElementById('btnOff');
@@ -835,48 +757,31 @@
 
         function showLoading(show) {
             const status = document.getElementById('connectionStatus');
-            if (show && status) {
-                status.innerHTML = '<span class="loading"></span>';
-            } else if (status) {
-                status.textContent = 'OK';
-            }
+            if (show && status) status.innerHTML = '<span class="loading"></span>';
+            else if (status) status.textContent = 'OK';
         }
 
         function showNotification(message, type) {
             const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
             notification.textContent = message;
             notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 25px;
-                background: ${type === 'success' ? '#00b09b' : '#ff6b6b'};
-                color: white;
-                border-radius: 10px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-                z-index: 1000;
-                animation: slideIn 0.3s ease;
+                position: fixed; top: 20px; right: 20px; padding: 15px 25px;
+                background: ${type === 'success' ? '#00b09b' : '#ff6b6b'}; color: white;
+                border-radius: 10px; z-index: 1000; animation: slideIn 0.3s ease;
             `;
-
             document.body.appendChild(notification);
-
             setTimeout(() => {
                 notification.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
+                setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
 
-        // === INITIALISATION COMPLÈTE ===
         function initializeApp() {
             loadSavedTheme();
             initializeChart();
             loadInitialState();
             startAutoRefresh();
             setupEventListeners();
-
             const themeBtn = document.getElementById('themeToggle');
             if (themeBtn) {
                 themeBtn.removeEventListener('click', toggleTheme);
@@ -896,10 +801,7 @@
             updateHistoryDisplay();
         }
 
-        // === EXPOSITION DES FONCTIONS GLOBALES ===
         window.sendCommand = sendCommand;
-
-        // Initialisation de l'authentification
         const auth = new AuthManager();
     </script>
 </body>
