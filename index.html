@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>🔧 PROJET IoT - Commande Moteur</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
@@ -11,36 +11,111 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
-            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Thème clair */
+        body.light-theme {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+
+        body.light-theme .container {
+            background: white;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .status-card {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+        }
+
+        body.light-theme .history-item {
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        body.light-theme .info-item {
+            background: #f8f9fa;
+        }
+
+        body.light-theme .description-card {
+            background: #f8f9fa;
+        }
+
+        /* Thème sombre */
+        body.dark-theme {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+        }
+
+        body.dark-theme .container {
+            background: #1e1e2f;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-theme .status-card {
+            background: #2a2a3a;
+            border: 1px solid #3a3a4a;
+        }
+
+        body.dark-theme .history-item {
+            background: #2a2a3a;
+            border-bottom: 1px solid #3a3a4a;
+        }
+
+        body.dark-theme .info-item {
+            background: #2a2a3a;
+        }
+
+        body.dark-theme .description-card {
+            background: #2a2a3a;
+            border: 1px solid #3a3a4a;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.3s ease;
         }
 
         /* Login Container */
         .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
         }
 
         .login-box {
-            background: white;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 40px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-theme .login-box {
+            background: rgba(30, 30, 47, 0.95);
+        }
+
+        body.light-theme .login-box {
+            background: white;
         }
 
         .login-box h2 {
             margin-bottom: 30px;
-            color: #333;
+            font-size: 28px;
         }
 
         .login-box input {
@@ -50,19 +125,21 @@
             border: 2px solid #ffaa00;
             border-radius: 10px;
             font-size: 16px;
-            outline: none;
+            background: transparent;
+            color: inherit;
         }
 
         .login-box button {
             width: 100%;
             padding: 15px;
+            margin-top: 20px;
             background: #ffaa00;
+            color: #333;
             border: none;
             border-radius: 10px;
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
             transition: transform 0.2s;
         }
 
@@ -79,32 +156,96 @@
         /* Dashboard */
         .dashboard {
             display: none;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+        }
+
+        /* Page Description */
+        .description-page {
+            display: none;
+            max-width: 500px;
+            width: 100%;
+            border-radius: 20px;
             padding: 20px;
         }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
+        .description-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
         }
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .description-card h2 {
             margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-            background: white;
-            padding: 15px 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            color: #ffaa00;
         }
 
-        .header-top h1 {
+        .description-card h3 {
+            margin: 20px 0 10px;
+            color: #ffaa00;
+        }
+
+        .description-card p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .tech-badges {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 8px 20px;
+            background: #ffaa00;
             color: #333;
-            font-size: 1.5em;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .feature-list {
+            text-align: left;
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+
+        .feature-list li {
+            margin: 10px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            background: #ffaa00;
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.02);
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .header-buttons {
@@ -112,60 +253,58 @@
             gap: 10px;
         }
 
-        .theme-btn {
-            padding: 8px 15px;
+        .theme-btn,
+        .logout-btn,
+        .info-btn {
             background: transparent;
             border: 2px solid #ffaa00;
             border-radius: 10px;
+            padding: 8px 15px;
             cursor: pointer;
-            transition: all 0.3s;
             font-size: 14px;
-            font-weight: bold;
+            transition: all 0.3s;
+            color: inherit;
         }
 
-        .theme-btn:hover {
+        .theme-btn:hover,
+        .logout-btn:hover,
+        .info-btn:hover {
             background: #ffaa00;
-            color: white;
-        }
-
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .card h2 {
-            margin-bottom: 20px;
             color: #333;
-            font-size: 1.3em;
+            transform: scale(1.05);
         }
 
-        .led-display {
+        .status-card {
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .led-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
-            flex-direction: column;
+            gap: 15px;
+            margin: 15px 0;
         }
 
         .led {
-            width: 100px;
-            height: 100px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             transition: all 0.3s;
         }
 
-        .led-off {
-            background: #666;
-            box-shadow: none;
-        }
-
         .led-on {
             background: radial-gradient(circle at 30% 30%, #ffaa00, #ff6600);
-            box-shadow: 0 0 40px #ffaa00;
+            box-shadow: 0 0 20px #ffaa00;
             animation: pulse 1.5s infinite;
+        }
+
+        .led-off {
+            background: radial-gradient(circle at 30% 30%, #666, #333);
+            box-shadow: none;
         }
 
         @keyframes pulse {
@@ -176,80 +315,84 @@
             }
 
             50% {
-                box-shadow: 0 0 50px #ffaa00;
+                box-shadow: 0 0 40px #ffaa00;
             }
         }
 
-        .led-status {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .button-group {
+        .control-buttons {
             display: flex;
             gap: 20px;
             justify-content: center;
+            margin: 20px 0;
         }
 
         .btn {
-            padding: 12px 30px;
-            font-size: 1.1em;
+            padding: 15px 30px;
+            font-size: 18px;
             font-weight: bold;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: transform 0.1s, opacity 0.3s;
         }
 
         .btn:active {
             transform: scale(0.95);
         }
 
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .btn-on {
-            background: linear-gradient(135deg, #00b09b, #00d4b0);
+            background: #00b09b;
             color: white;
+            box-shadow: 0 5px 15px rgba(0, 176, 155, 0.3);
         }
 
         .btn-off {
-            background: linear-gradient(135deg, #ff6b6b, #ff4d4d);
+            background: #ff6b6b;
             color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
         }
 
-        .info-panel {
+        .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .info-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .info-label {
-            display: block;
-            font-size: 0.8em;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .info-value {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .chart-container {
-            height: 250px;
             margin: 20px 0;
         }
 
+        .info-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 170, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .history-section {
+            margin-top: 20px;
+        }
+
+        .history-section h3 {
+            margin-bottom: 15px;
+        }
+
         .history-list {
-            max-height: 250px;
+            max-height: 200px;
             overflow-y: auto;
         }
 
@@ -257,57 +400,53 @@
             display: flex;
             justify-content: space-between;
             padding: 10px;
-            border-bottom: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+
+        .history-command {
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 5px;
         }
 
         .history-command.on {
             color: #00b09b;
-            font-weight: bold;
         }
 
         .history-command.off {
             color: #ff6b6b;
-            font-weight: bold;
         }
 
-        footer {
+        .chart-container {
+            margin: 20px 0;
+            height: 200px;
+        }
+
+        .connection-status {
             text-align: center;
-            padding: 20px;
-            color: white;
-            font-size: 0.9em;
+            font-size: 12px;
+            margin-top: 15px;
+            padding: 5px;
+            border-radius: 5px;
         }
 
-        /* Dark Theme */
-        body.dark-theme .dashboard {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffaa00;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
         }
 
-        body.dark-theme .header-top,
-        body.dark-theme .card {
-            background: #2d2d2d;
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        body.dark-theme .header-top h1,
-        body.dark-theme .card h2,
-        body.dark-theme .led-status,
-        body.dark-theme .info-value {
-            color: #e0e0e0;
-        }
-
-        body.dark-theme .info-item {
-            background: #363636;
-        }
-
-        body.dark-theme .info-label {
-            color: #b0b0b0;
-        }
-
-        body.dark-theme .history-item {
-            border-bottom-color: #404040;
-            color: #e0e0e0;
-        }
-
-        /* Animations */
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
@@ -331,98 +470,120 @@
                 opacity: 0;
             }
         }
-
-        @media (max-width: 600px) {
-            .button-group {
-                flex-direction: column;
-            }
-
-            .btn {
-                justify-content: center;
-            }
-
-            .header-top {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
     </style>
 </head>
 
-<body>
-    <!-- Login Page -->
-    <div class="login-container" id="loginContainer">
+<body class="dark-theme">
+    <!-- Login Container -->
+    <div class="container login-container" id="loginContainer">
         <div class="login-box">
             <h2>🔐 Accès sécurisé</h2>
-            <input type="password" id="passwordInput" placeholder="Mot de passe" autocomplete="off">
+            <input type="password" id="passwordInput" placeholder="Entrez le mot de passe" autocomplete="off">
             <button id="loginBtn">Se connecter</button>
             <div class="error-msg" id="loginError"></div>
         </div>
     </div>
 
     <!-- Dashboard -->
-    <div class="dashboard" id="dashboard">
-        <div class="container">
-            <div class="header-top">
-                <h1>🔧 PROJET IoT</h1>
-                <div class="header-buttons">
-                    <button class="theme-btn" id="themeToggle">
-                        <span>☀️</span> Mode clair
-                    </button>
-                    <button class="theme-btn" id="logoutBtn">
-                        <span>🚪</span> Déconnexion
-                    </button>
-                </div>
+    <div class="container dashboard" id="dashboard">
+        <h1>
+            🔧 PROJET IoT
+            <div class="header-buttons">
+                <button class="info-btn" id="infoBtn">ℹ️ Description</button>
+                <button class="theme-btn" id="themeToggle">
+                    <span class="theme-icon">☀️</span>
+                    <span class="theme-text">Mode clair</span>
+                </button>
+                <button class="logout-btn" id="logoutBtn">🚪 Déconnexion</button>
+            </div>
+        </h1>
+
+        <div class="status-card">
+            <h3>État du Moteur</h3>
+            <div class="led-container">
+                <div class="led led-off" id="led"></div>
+                <span id="ledStatus" style="font-size: 18px; font-weight: bold;">---</span>
+            </div>
+        </div>
+
+        <div class="control-buttons">
+            <button class="btn btn-on" id="btnOn">🟢 MARCHE</button>
+            <button class="btn btn-off" id="btnOff">🔴 ARRÊT</button>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Dernière commande</div>
+                <div class="info-value" id="lastCommand">-</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Dernière mise à jour</div>
+                <div class="info-value" id="lastUpdate">-</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Statut connexion</div>
+                <div class="info-value" id="connectionStatus">OK</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Rafraîchissement</div>
+                <div class="info-value" id="refreshTime">-</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="commandChart"></canvas>
+        </div>
+
+        <div class="history-section">
+            <h3>📜 Historique des commandes</h3>
+            <div class="history-list" id="historyList">
+                <div style="text-align: center; padding: 20px;">Aucune commande</div>
+            </div>
+        </div>
+
+        <div class="connection-status">
+            🔌 Connecté à ThingSpeak
+        </div>
+    </div>
+
+    <!-- Page Description -->
+    <div class="description-page" id="descriptionPage">
+        <div class="description-card">
+            <h2>📖 À propos du projet</h2>
+
+            <div class="tech-badges">
+                <span class="badge">🚀 IoT</span>
+                <span class="badge">📡 ESP32</span>
+                <span class="badge">💡 ThingSpeak</span>
+                <span class="badge">🎨 Chart.js</span>
             </div>
 
-            <div class="card">
-                <h2>📊 État du Moteur</h2>
-                <div class="led-display">
-                    <div class="led led-off" id="led"></div>
-                    <div class="led-status" id="ledStatus">---</div>
-                </div>
-            </div>
+            <p>Ce projet a été mis en place par <strong>Ir DIAMONEKA VAKANDA Jonathan</strong> pour contrôler à distance
+                un moteur connecté sur internet via ThingSpeak.</p>
 
-            <div class="card">
-                <h2>🎮 Commandes</h2>
-                <div class="button-group">
-                    <button class="btn btn-on" id="btnOn">🟢 MARCHE</button>
-                    <button class="btn btn-off" id="btnOff">🔴 ARRÊT</button>
-                </div>
-            </div>
+            <h3>✨ Fonctionnalités</h3>
+            <ul class="feature-list">
+                <li>🔌 Contrôle à distance du moteur (Marche/Arrêt)</li>
+                <li>📊 Visualisation de l'historique des commandes en temps réel</li>
+                <li>📈 Graphique d'évolution de l'état du moteur</li>
+                <li>🌓 Thème clair/sombre personnalisable</li>
+                <li>📱 Design responsive (mobile, tablette, desktop)</li>
+                <li>🔐 Accès sécurisé par mot de passe</li>
+            </ul>
 
-            <div class="info-panel">
-                <div class="info-item">
-                    <span class="info-label">Dernière commande</span>
-                    <span class="info-value" id="lastCommand">-</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Statut connexion</span>
-                    <span class="info-value" id="connectionStatus">OK</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Dernière mise à jour</span>
-                    <span class="info-value" id="lastUpdate">-</span>
-                </div>
-            </div>
+            <h3>🛠️ Technologies utilisées</h3>
+            <ul class="feature-list">
+                <li>🎯 Frontend : HTML5, CSS3, JavaScript</li>
+                <li>📊 Graphiques : Chart.js</li>
+                <li>☁️ Cloud : ThingSpeak API</li>
+                <li>🔌 Microcontrôleur : ESP32</li>
+            </ul>
 
-            <div class="card">
-                <h2>📈 Historique (20 derniers états)</h2>
-                <div class="chart-container">
-                    <canvas id="commandChart"></canvas>
-                </div>
-            </div>
+            <h3>📡 Communication</h3>
+            <p>L'ESP32 lit les commandes depuis ThingSpeak et agit sur le moteur. L'interface web envoie les commandes
+                via l'API ThingSpeak et affiche l'état en temps réel.</p>
 
-            <div class="card">
-                <h2>📜 Journal des commandes</h2>
-                <div class="history-list" id="historyList">
-                    <div style="text-align: center; padding: 20px;">Aucune commande</div>
-                </div>
-            </div>
-
-            <footer>
-                🔌 Connecté à ThingSpeak | Projet IoT - ESP32
-            </footer>
+            <button class="back-btn" id="backBtn">← Retour au tableau de bord</button>
         </div>
     </div>
 
@@ -435,13 +596,14 @@
         if (sessionStorage.getItem('loggedIn') === 'true') {
             document.getElementById('loginContainer').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('descriptionPage').style.display = 'none';
             initApp();
         } else {
             document.getElementById('loginContainer').style.display = 'flex';
             document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('descriptionPage').style.display = 'none';
         }
 
-        // Fonction de connexion
         function login() {
             const password = document.getElementById('passwordInput').value;
             const errorDiv = document.getElementById('loginError');
@@ -450,6 +612,7 @@
                 sessionStorage.setItem('loggedIn', 'true');
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('descriptionPage').style.display = 'none';
                 errorDiv.textContent = '';
                 initApp();
             } else {
@@ -458,13 +621,23 @@
             }
         }
 
-        // Fonction de déconnexion
         function logout() {
             sessionStorage.removeItem('loggedIn');
             location.reload();
         }
 
-        // ==================== APPLICATION ====================
+        // Navigation entre pages
+        function showDashboard() {
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('descriptionPage').style.display = 'none';
+        }
+
+        function showDescription() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('descriptionPage').style.display = 'block';
+        }
+
+        // ==================== CONFIGURATION ====================
         const CONFIG = {
             channelId: '3295988',
             writeApiKey: '10JCZMPJ1E41POZS',
@@ -473,23 +646,29 @@
             maxHistoryItems: 20
         };
 
-        let currentState = 0;
-        let history = [];
+        // ==================== ÉTAT GLOBAL ====================
+        let currentLedState = 0;
+        let commandHistory = [];
         let chart = null;
         let refreshInterval = null;
 
-        // Thème
+        // ==================== THÈME ====================
         function toggleTheme() {
             const body = document.body;
-            const btn = document.getElementById('themeToggle');
+            const themeIcon = document.querySelector('#themeToggle .theme-icon');
+            const themeText = document.querySelector('#themeToggle .theme-text');
 
             if (body.classList.contains('dark-theme')) {
                 body.classList.remove('dark-theme');
-                btn.innerHTML = '<span>☀️</span> Mode clair';
+                body.classList.add('light-theme');
+                if (themeIcon) themeIcon.textContent = '🌙';
+                if (themeText) themeText.textContent = 'Mode sombre';
                 localStorage.setItem('theme', 'light');
             } else {
+                body.classList.remove('light-theme');
                 body.classList.add('dark-theme');
-                btn.innerHTML = '<span>🌙</span> Mode sombre';
+                if (themeIcon) themeIcon.textContent = '☀️';
+                if (themeText) themeText.textContent = 'Mode clair';
                 localStorage.setItem('theme', 'dark');
             }
 
@@ -503,36 +682,41 @@
             }
         }
 
-        function loadTheme() {
+        function loadSavedTheme() {
             const savedTheme = localStorage.getItem('theme');
             const body = document.body;
-            const btn = document.getElementById('themeToggle');
+            const themeIcon = document.querySelector('#themeToggle .theme-icon');
+            const themeText = document.querySelector('#themeToggle .theme-text');
 
             if (savedTheme === 'light') {
+                body.classList.add('light-theme');
                 body.classList.remove('dark-theme');
-                btn.innerHTML = '<span>☀️</span> Mode clair';
+                if (themeIcon) themeIcon.textContent = '🌙';
+                if (themeText) themeText.textContent = 'Mode sombre';
             } else {
                 body.classList.add('dark-theme');
-                btn.innerHTML = '<span>🌙</span> Mode sombre';
+                body.classList.remove('light-theme');
+                if (themeIcon) themeIcon.textContent = '☀️';
+                if (themeText) themeText.textContent = 'Mode clair';
             }
         }
 
-        // Graphique
-        function initChart() {
+        // ==================== CHART.JS ====================
+        function initializeChart() {
             const ctx = document.getElementById('commandChart').getContext('2d');
-            const isDark = document.body.classList.contains('dark-theme');
+            const isDarkTheme = document.body.classList.contains('dark-theme');
 
             chart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: [],
                     datasets: [{
-                        label: 'État',
+                        label: 'État du Moteur',
                         data: [],
                         borderColor: '#ffaa00',
-                        backgroundColor: isDark ? 'rgba(255,170,0,0.2)' : 'rgba(255,170,0,0.1)',
-                        fill: true,
-                        tension: 0.4
+                        backgroundColor: isDarkTheme ? 'rgba(255, 170, 0, 0.2)' : 'rgba(255, 170, 0, 0.1)',
+                        tension: 0.4,
+                        fill: true
                     }]
                 },
                 options: {
@@ -541,124 +725,209 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         y: {
-                            min: 0,
+                            beginAtZero: true,
                             max: 1,
-                            ticks: { callback: v => v === 1 ? 'MARCHE' : 'ARRÊT' }
+                            grid: { color: isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' },
+                            ticks: {
+                                stepSize: 1,
+                                color: isDarkTheme ? '#e0e0e0' : '#333',
+                                callback: (value) => value === 1 ? 'MARCHE' : 'ARRÊT'
+                            }
+                        },
+                        x: {
+                            grid: { color: isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' },
+                            ticks: { color: isDarkTheme ? '#e0e0e0' : '#333' }
                         }
                     }
                 }
             });
         }
 
-        // Envoyer commande
+        // ==================== COMMUNICATION THINGSPEAK ====================
         async function sendCommand(value) {
+            setButtonsDisabled(true);
             document.getElementById('lastCommand').textContent = value === 1 ? 'MARCHE' : 'ARRÊT';
             document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('fr-FR');
+            showLoading(true);
 
             try {
                 const url = `https://api.thingspeak.com/update?api_key=${CONFIG.writeApiKey}&field1=${value}`;
                 const response = await fetch(url);
-                if (response.ok) {
+                const result = await response.text();
+
+                if (response.ok && result !== '0') {
                     addToHistory(value);
-                    updateUI(value);
-                    showNotification('Commande envoyée !', 'success');
-                    setTimeout(readState, 3000);
+                    updateLEDState(value);
+                    setTimeout(() => readLEDState(), 5000);
+                    showNotification('Commande envoyée avec succès !', 'success');
+                } else {
+                    throw new Error('Échec de l\'envoi');
                 }
-            } catch (e) {
-                showNotification('Erreur de connexion', 'error');
+            } catch (error) {
+                console.error('Erreur:', error);
+                showNotification('Erreur de communication avec ThingSpeak', 'error');
+                document.getElementById('connectionStatus').textContent = 'ERREUR';
+            } finally {
+                showLoading(false);
+                setTimeout(() => {
+                    setButtonsDisabled(false);
+                    document.getElementById('connectionStatus').textContent = 'OK';
+                }, 15000);
             }
         }
 
-        // Lire état
-        async function readState() {
+        async function readLEDState() {
             try {
                 const url = `https://api.thingspeak.com/channels/${CONFIG.channelId}/fields/1/last.json?api_key=${CONFIG.readApiKey}`;
                 const response = await fetch(url);
                 const data = await response.json();
+
                 if (data.field1 !== undefined) {
-                    updateUI(parseInt(data.field1));
+                    const value = parseInt(data.field1);
+                    updateLEDState(value);
+                    addToHistory(value, true);
                     document.getElementById('connectionStatus').textContent = 'OK';
                 }
-            } catch (e) {
+            } catch (error) {
+                console.error('Erreur de lecture:', error);
                 document.getElementById('connectionStatus').textContent = 'ERREUR';
             }
         }
 
-        // Mettre à jour l'affichage
-        function updateUI(value) {
-            currentState = value;
+        // ==================== MISE À JOUR UI ====================
+        function updateLEDState(value) {
             const led = document.getElementById('led');
             const ledStatus = document.getElementById('ledStatus');
 
             if (value === 1) {
                 led.className = 'led led-on';
-                ledStatus.textContent = 'ALLUMÉ ✅';
+                ledStatus.textContent = 'MARCHE';
+                currentLedState = 1;
             } else {
                 led.className = 'led led-off';
-                ledStatus.textContent = 'ÉTEINT ❌';
+                ledStatus.textContent = 'ARRÊT';
+                currentLedState = 0;
             }
 
-            if (chart) {
-                chart.data.labels.push(new Date().toLocaleTimeString());
-                chart.data.datasets[0].data.push(value);
-                if (chart.data.labels.length > 20) {
-                    chart.data.labels.shift();
-                    chart.data.datasets[0].data.shift();
-                }
-                chart.update();
-            }
+            updateChart();
         }
 
-        // Historique
-        function addToHistory(value) {
-            history.unshift({ value, time: new Date().toLocaleTimeString() });
-            if (history.length > 20) history.pop();
+        function updateChart() {
+            if (!chart) return;
+            chart.data.labels.push(new Date().toLocaleTimeString('fr-FR'));
+            chart.data.datasets[0].data.push(currentLedState);
+            if (chart.data.labels.length > 20) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+            }
+            chart.update();
+        }
 
+        // ==================== HISTORIQUE ====================
+        function addToHistory(value, fromRead = false) {
+            commandHistory.unshift({ value, time: new Date() });
+            if (commandHistory.length > CONFIG.maxHistoryItems) commandHistory.pop();
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
             const historyList = document.getElementById('historyList');
-            historyList.innerHTML = history.map(item => `
-                <div class="history-item">
-                    <span class="${item.value === 1 ? 'history-command on' : 'history-command off'}">
-                        ${item.value === 1 ? '🟢 MARCHE' : '🔴 ARRÊT'}
-                    </span>
-                    <span>${item.time}</span>
-                </div>
-            `).join('');
+            historyList.innerHTML = '';
+
+            if (commandHistory.length === 0) {
+                historyList.innerHTML = '<div style="text-align: center; padding: 20px;">Aucune commande</div>';
+                return;
+            }
+
+            commandHistory.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                const commandSpan = document.createElement('span');
+                commandSpan.className = `history-command ${item.value === 1 ? 'on' : 'off'}`;
+                commandSpan.textContent = item.value === 1 ? 'MARCHE' : 'ARRÊT';
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'history-time';
+                timeSpan.textContent = item.time.toLocaleTimeString('fr-FR');
+                div.appendChild(commandSpan);
+                div.appendChild(timeSpan);
+                historyList.appendChild(div);
+            });
         }
 
-        // Notification
-        function showNotification(msg, type) {
-            const div = document.createElement('div');
-            div.textContent = msg;
-            div.style.cssText = `
-                position: fixed; bottom: 20px; right: 20px; padding: 12px 24px;
-                background: ${type === 'success' ? '#00b09b' : '#ff6b6b'};
-                color: white; border-radius: 10px; z-index: 1000;
-                animation: slideIn 0.3s ease; font-weight: bold;
+        // ==================== RAFRAÎCHISSEMENT ====================
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(async () => {
+                await readLEDState();
+                document.getElementById('refreshTime').textContent = new Date().toLocaleTimeString('fr-FR');
+            }, CONFIG.refreshInterval);
+        }
+
+        async function loadInitialState() {
+            await readLEDState();
+            updateHistoryDisplay();
+        }
+
+        // ==================== UTILITAIRES UI ====================
+        function setButtonsDisabled(disabled) {
+            const btnOn = document.getElementById('btnOn');
+            const btnOff = document.getElementById('btnOff');
+            if (btnOn) btnOn.disabled = disabled;
+            if (btnOff) btnOff.disabled = disabled;
+        }
+
+        function showLoading(show) {
+            const status = document.getElementById('connectionStatus');
+            if (show && status) {
+                status.innerHTML = '<span class="loading"></span>';
+            } else if (status) {
+                status.textContent = 'OK';
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; padding: 15px 25px;
+                background: ${type === 'success' ? '#00b09b' : '#ff6b6b'}; color: white;
+                border-radius: 10px; z-index: 1000; animation: slideIn 0.3s ease;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             `;
-            document.body.appendChild(div);
+            document.body.appendChild(notification);
             setTimeout(() => {
-                div.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => div.remove(), 300);
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
 
-        // Initialisation
+        // ==================== INITIALISATION ====================
+        function setupEventListeners() {
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.95)');
+                btn.addEventListener('mouseup', () => btn.style.transform = '');
+                btn.addEventListener('mouseleave', () => btn.style.transform = '');
+            });
+        }
+
         function initApp() {
-            loadTheme();
-            initChart();
-            readState();
-            if (refreshInterval) clearInterval(refreshInterval);
-            refreshInterval = setInterval(readState, 5000);
+            loadSavedTheme();
+            initializeChart();
+            loadInitialState();
+            startAutoRefresh();
+            setupEventListeners();
 
             document.getElementById('btnOn').onclick = () => sendCommand(1);
             document.getElementById('btnOff').onclick = () => sendCommand(0);
-            document.getElementById('logoutBtn').onclick = logout;
             document.getElementById('themeToggle').onclick = toggleTheme;
+            document.getElementById('logoutBtn').onclick = logout;
+            document.getElementById('infoBtn').onclick = showDescription;
+            document.getElementById('backBtn').onclick = showDashboard;
         }
 
-        // Écouteurs d'événements
+        // Écouteurs d'événements pour la connexion
         document.getElementById('loginBtn').onclick = login;
-        document.getElementById('passwordInput').onkeypress = function (e) {
+        document.getElementById('passwordInput').onkeypress = (e) => {
             if (e.key === 'Enter') login();
         };
     </script>
