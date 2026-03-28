@@ -3,18 +3,358 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔧 PROJET IoT - Commande Moteur</title>
-    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+
+        /* Login Container */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .login-box h2 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #ffaa00;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            background: #ffaa00;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+
+        .login-box button:hover {
+            transform: scale(1.02);
+        }
+
+        .error-msg {
+            color: #ff6b6b;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-top h1 {
+            color: #333;
+            font-size: 1.5em;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .theme-btn {
+            padding: 8px 15px;
+            background: transparent;
+            border: 2px solid #ffaa00;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .theme-btn:hover {
+            background: #ffaa00;
+            color: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.3em;
+        }
+
+        .led-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-direction: column;
+        }
+
+        .led {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .led-off {
+            background: #666;
+            box-shadow: none;
+        }
+
+        .led-on {
+            background: radial-gradient(circle at 30% 30%, #ffaa00, #ff6600);
+            box-shadow: 0 0 40px #ffaa00;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px #ffaa00;
+            }
+
+            50% {
+                box-shadow: 0 0 50px #ffaa00;
+            }
+        }
+
+        .led-status {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-on {
+            background: linear-gradient(135deg, #00b09b, #00d4b0);
+            color: white;
+        }
+
+        .btn-off {
+            background: linear-gradient(135deg, #ff6b6b, #ff4d4d);
+            color: white;
+        }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .info-label {
+            display: block;
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .chart-container {
+            height: 250px;
+            margin: 20px 0;
+        }
+
+        .history-list {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .history-command.on {
+            color: #00b09b;
+            font-weight: bold;
+        }
+
+        .history-command.off {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        /* Dark Theme */
+        body.dark-theme .dashboard {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        body.dark-theme .header-top,
+        body.dark-theme .card {
+            background: #2d2d2d;
+        }
+
+        body.dark-theme .header-top h1,
+        body.dark-theme .card h2,
+        body.dark-theme .led-status,
+        body.dark-theme .info-value {
+            color: #e0e0e0;
+        }
+
+        body.dark-theme .info-item {
+            background: #363636;
+        }
+
+        body.dark-theme .info-label {
+            color: #b0b0b0;
+        }
+
+        body.dark-theme .history-item {
+            border-bottom-color: #404040;
+            color: #e0e0e0;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+
+            .header-top {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Login Container -->
+    <!-- Login Page -->
     <div class="login-container" id="loginContainer">
         <div class="login-box">
             <h2>🔐 Accès sécurisé</h2>
-            <input type="password" id="passwordInput" placeholder="Entrez le mot de passe" autocomplete="off">
+            <input type="password" id="passwordInput" placeholder="Mot de passe" autocomplete="off">
             <button id="loginBtn">Se connecter</button>
             <div class="error-msg" id="loginError"></div>
         </div>
@@ -27,12 +367,10 @@
                 <h1>🔧 PROJET IoT</h1>
                 <div class="header-buttons">
                     <button class="theme-btn" id="themeToggle">
-                        <span class="theme-icon">☀️</span>
-                        <span class="theme-text">Mode clair</span>
+                        <span>☀️</span> Mode clair
                     </button>
                     <button class="theme-btn" id="logoutBtn">
-                        <span>🚪</span>
-                        <span>Déconnexion</span>
+                        <span>🚪</span> Déconnexion
                     </button>
                 </div>
             </div>
@@ -40,7 +378,7 @@
             <div class="card">
                 <h2>📊 État du Moteur</h2>
                 <div class="led-display">
-                    <div class="led" id="led"></div>
+                    <div class="led led-off" id="led"></div>
                     <div class="led-status" id="ledStatus">---</div>
                 </div>
             </div>
@@ -48,14 +386,8 @@
             <div class="card">
                 <h2>🎮 Commandes</h2>
                 <div class="button-group">
-                    <button class="btn btn-on" id="btnOn">
-                        <span class="btn-icon">🟢</span>
-                        <span>MARCHE</span>
-                    </button>
-                    <button class="btn btn-off" id="btnOff">
-                        <span class="btn-icon">🔴</span>
-                        <span>ARRÊT</span>
-                    </button>
+                    <button class="btn btn-on" id="btnOn">🟢 MARCHE</button>
+                    <button class="btn btn-off" id="btnOff">🔴 ARRÊT</button>
                 </div>
             </div>
 
@@ -89,12 +421,247 @@
             </div>
 
             <footer>
-                <p>🔌 Connecté à ThingSpeak | Projet IoT - ESP32</p>
+                🔌 Connecté à ThingSpeak | Projet IoT - ESP32
             </footer>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // ==================== AUTHENTIFICATION ====================
+        // MOT DE PASSE : Admin1234
+        const VALID_PASSWORD = "Admin1234";
+
+        // Vérifier la session au chargement
+        if (sessionStorage.getItem('loggedIn') === 'true') {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            initApp();
+        } else {
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+        }
+
+        // Fonction de connexion
+        function login() {
+            const password = document.getElementById('passwordInput').value;
+            const errorDiv = document.getElementById('loginError');
+
+            if (password === VALID_PASSWORD) {
+                sessionStorage.setItem('loggedIn', 'true');
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                errorDiv.textContent = '';
+                initApp();
+            } else {
+                errorDiv.textContent = 'Mot de passe incorrect';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        // Fonction de déconnexion
+        function logout() {
+            sessionStorage.removeItem('loggedIn');
+            location.reload();
+        }
+
+        // ==================== APPLICATION ====================
+        const CONFIG = {
+            channelId: '3295988',
+            writeApiKey: '10JCZMPJ1E41POZS',
+            readApiKey: 'QJVJO9L6RIRUKS1U',
+            refreshInterval: 15000,
+            maxHistoryItems: 20
+        };
+
+        let currentState = 0;
+        let history = [];
+        let chart = null;
+        let refreshInterval = null;
+
+        // Thème
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
+
+            if (body.classList.contains('dark-theme')) {
+                body.classList.remove('dark-theme');
+                btn.innerHTML = '<span>☀️</span> Mode clair';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.add('dark-theme');
+                btn.innerHTML = '<span>🌙</span> Mode sombre';
+                localStorage.setItem('theme', 'dark');
+            }
+
+            if (chart) {
+                const isDark = body.classList.contains('dark-theme');
+                chart.options.scales.y.grid.color = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+                chart.options.scales.y.ticks.color = isDark ? '#e0e0e0' : '#333';
+                chart.options.scales.x.grid.color = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+                chart.options.scales.x.ticks.color = isDark ? '#e0e0e0' : '#333';
+                chart.update();
+            }
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
+
+            if (savedTheme === 'light') {
+                body.classList.remove('dark-theme');
+                btn.innerHTML = '<span>☀️</span> Mode clair';
+            } else {
+                body.classList.add('dark-theme');
+                btn.innerHTML = '<span>🌙</span> Mode sombre';
+            }
+        }
+
+        // Graphique
+        function initChart() {
+            const ctx = document.getElementById('commandChart').getContext('2d');
+            const isDark = document.body.classList.contains('dark-theme');
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'État',
+                        data: [],
+                        borderColor: '#ffaa00',
+                        backgroundColor: isDark ? 'rgba(255,170,0,0.2)' : 'rgba(255,170,0,0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 1,
+                            ticks: { callback: v => v === 1 ? 'MARCHE' : 'ARRÊT' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Envoyer commande
+        async function sendCommand(value) {
+            document.getElementById('lastCommand').textContent = value === 1 ? 'MARCHE' : 'ARRÊT';
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('fr-FR');
+
+            try {
+                const url = `https://api.thingspeak.com/update?api_key=${CONFIG.writeApiKey}&field1=${value}`;
+                const response = await fetch(url);
+                if (response.ok) {
+                    addToHistory(value);
+                    updateUI(value);
+                    showNotification('Commande envoyée !', 'success');
+                    setTimeout(readState, 3000);
+                }
+            } catch (e) {
+                showNotification('Erreur de connexion', 'error');
+            }
+        }
+
+        // Lire état
+        async function readState() {
+            try {
+                const url = `https://api.thingspeak.com/channels/${CONFIG.channelId}/fields/1/last.json?api_key=${CONFIG.readApiKey}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.field1 !== undefined) {
+                    updateUI(parseInt(data.field1));
+                    document.getElementById('connectionStatus').textContent = 'OK';
+                }
+            } catch (e) {
+                document.getElementById('connectionStatus').textContent = 'ERREUR';
+            }
+        }
+
+        // Mettre à jour l'affichage
+        function updateUI(value) {
+            currentState = value;
+            const led = document.getElementById('led');
+            const ledStatus = document.getElementById('ledStatus');
+
+            if (value === 1) {
+                led.className = 'led led-on';
+                ledStatus.textContent = 'ALLUMÉ ✅';
+            } else {
+                led.className = 'led led-off';
+                ledStatus.textContent = 'ÉTEINT ❌';
+            }
+
+            if (chart) {
+                chart.data.labels.push(new Date().toLocaleTimeString());
+                chart.data.datasets[0].data.push(value);
+                if (chart.data.labels.length > 20) {
+                    chart.data.labels.shift();
+                    chart.data.datasets[0].data.shift();
+                }
+                chart.update();
+            }
+        }
+
+        // Historique
+        function addToHistory(value) {
+            history.unshift({ value, time: new Date().toLocaleTimeString() });
+            if (history.length > 20) history.pop();
+
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = history.map(item => `
+                <div class="history-item">
+                    <span class="${item.value === 1 ? 'history-command on' : 'history-command off'}">
+                        ${item.value === 1 ? '🟢 MARCHE' : '🔴 ARRÊT'}
+                    </span>
+                    <span>${item.time}</span>
+                </div>
+            `).join('');
+        }
+
+        // Notification
+        function showNotification(msg, type) {
+            const div = document.createElement('div');
+            div.textContent = msg;
+            div.style.cssText = `
+                position: fixed; bottom: 20px; right: 20px; padding: 12px 24px;
+                background: ${type === 'success' ? '#00b09b' : '#ff6b6b'};
+                color: white; border-radius: 10px; z-index: 1000;
+                animation: slideIn 0.3s ease; font-weight: bold;
+            `;
+            document.body.appendChild(div);
+            setTimeout(() => {
+                div.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => div.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialisation
+        function initApp() {
+            loadTheme();
+            initChart();
+            readState();
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(readState, 5000);
+
+            document.getElementById('btnOn').onclick = () => sendCommand(1);
+            document.getElementById('btnOff').onclick = () => sendCommand(0);
+            document.getElementById('logoutBtn').onclick = logout;
+            document.getElementById('themeToggle').onclick = toggleTheme;
+        }
+
+        // Écouteurs d'événements
+        document.getElementById('loginBtn').onclick = login;
+        document.getElementById('passwordInput').onkeypress = function (e) {
+            if (e.key === 'Enter') login();
+        };
+    </script>
 </body>
 
 </html>
