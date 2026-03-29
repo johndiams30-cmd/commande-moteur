@@ -561,10 +561,11 @@
         function showDashboard() { document.getElementById('dashboard').style.display = 'block'; document.getElementById('descriptionPage').style.display = 'none'; }
         function showDescription() { document.getElementById('dashboard').style.display = 'none'; document.getElementById('descriptionPage').style.display = 'block'; }
 
+        // ✅ CLÉS API CORRIGÉES (avec les BONS zéros)
         const CONFIG = {
             channelId: '3295988',
-            writeApiKey: '10JCZMPJ1E41P0ZS',
-            readApiKey: 'QJVJO9L6RIRUKS1U',
+            writeApiKey: '10JCZMPJ1E41P0ZS',  // ← ZÉRO, pas O
+            readApiKey: 'QJVJ09L6RIRUKS1U',   // ← ZÉRO, pas O
             refreshInterval: 5000
         };
 
@@ -588,17 +589,45 @@
         }
         setInterval(updateRuntimeDisplay, 1000);
 
+        // ✅ FONCTION SENDCOMMAND CORRIGÉE AVEC MESSAGE DE SUCCÈS
         async function sendCommand(value) {
             const device = getDeviceType();
-            document.getElementById('lastCommand').textContent = value === 1 ? 'MARCHE' : 'ARRÊT';
-            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('fr-FR');
+            const commandText = value === 1 ? 'MARCHE' : 'ARRÊT';
+
+            document.getElementById('lastCommand').textContent = commandText;
             vibrate();
+
+            // Affichage local immédiat
+            updateLEDState(value);
+
+            // Message d'envoi en cours
+            showNotification(`⏳ Envoi de la commande ${commandText}...`, 'success');
+
             try {
                 const url = `https://api.thingspeak.com/update?api_key=${CONFIG.writeApiKey}&field1=${value}&field2=${encodeURIComponent(device)}&field3=${new Date().toISOString()}`;
-                await fetch(url);
-                showNotification(`Commande ${value === 1 ? 'MARCHE' : 'ARRÊT'} depuis ${device}`, 'success');
-                setTimeout(() => { readLEDState(); loadHistory(); }, 2000);
-            } catch (e) { showNotification('Erreur', 'error'); }
+                const response = await fetch(url);
+                const result = await response.text();
+
+                if (result && result !== "0") {
+                    // ✅ SUCCÈS
+                    showNotification(`✅ Commande ${commandText} envoyée avec succès ! (ID: ${result})`, 'success');
+                    console.log(`Commande envoyée avec succès, ID: ${result}`);
+                } else {
+                    // ❌ ÉCHEC
+                    showNotification(`❌ Échec : La commande ${commandText} n'a pas été enregistrée. Vérifie ta clé API.`, 'error');
+                    console.error(`Erreur: ThingSpeak a retourné ${result}`);
+                }
+
+                // Resynchronisation avec ThingSpeak
+                setTimeout(() => {
+                    readLEDState();
+                    loadHistory();
+                }, 3000);
+
+            } catch (e) {
+                showNotification(`❌ Erreur réseau : Impossible d'envoyer la commande ${commandText}`, 'error');
+                console.error('Erreur détaillée:', e);
+            }
         }
 
         async function loadHistory() {
@@ -693,9 +722,23 @@
         function updateLEDState(value) {
             currentLedState = value;
             const led = document.getElementById('led'), status = document.getElementById('ledStatus');
-            if (value === 1) { led.className = 'led led-on'; status.textContent = 'MARCHE ✅'; }
-            else { led.className = 'led led-off'; status.textContent = 'ARRÊT ❌'; motorStartTime = null; }
-            if (chart) { chart.data.labels.push(new Date().toLocaleTimeString()); chart.data.datasets[0].data.push(value); if (chart.data.labels.length > 20) { chart.data.labels.shift(); chart.data.datasets[0].data.shift(); } chart.update(); }
+            if (value === 1) {
+                led.className = 'led led-on';
+                status.textContent = 'MARCHE ✅';
+            } else {
+                led.className = 'led led-off';
+                status.textContent = 'ARRÊT ❌';
+                motorStartTime = null;
+            }
+            if (chart) {
+                chart.data.labels.push(new Date().toLocaleTimeString());
+                chart.data.datasets[0].data.push(value);
+                if (chart.data.labels.length > 20) {
+                    chart.data.labels.shift();
+                    chart.data.datasets[0].data.shift();
+                }
+                chart.update();
+            }
         }
 
         function initChart() {
