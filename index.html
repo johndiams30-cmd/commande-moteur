@@ -61,7 +61,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         body.dark-theme .menu-header-bar {
@@ -89,7 +89,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0,0,0,0.5);
             z-index: 1001;
             display: none;
         }
@@ -104,7 +104,7 @@
             z-index: 1002;
             transition: left 0.3s ease;
             overflow-y: auto;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
         }
 
         body.light-theme .menu-drawer {
@@ -447,7 +447,6 @@
                 transform: translateX(100%);
                 opacity: 0;
             }
-
             to {
                 transform: translateX(0);
                 opacity: 1;
@@ -459,7 +458,6 @@
                 transform: translateX(0);
                 opacity: 1;
             }
-
             to {
                 transform: translateX(100%);
                 opacity: 0;
@@ -470,15 +468,12 @@
             .info-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-
             .control-buttons {
                 flex-direction: column;
             }
-
             .btn {
                 justify-content: center;
             }
-
             .container {
                 padding: 70px 15px 20px 15px;
             }
@@ -615,8 +610,7 @@
         <div class="connection-status">🔌 Connecté à ThingSpeak</div>
     </div>
 
-    <div style="display:none; max-width:500px; width:100%; border-radius:20px; padding:20px; margin-top: 70px;"
-        id="descriptionPage">
+    <div style="display:none; max-width:500px; width:100%; border-radius:20px; padding:20px; margin-top: 70px;" id="descriptionPage">
         <div style="background:rgba(255,255,255,0.1); border-radius:20px; padding:30px; text-align:center;">
             <h2 style="color:#ffaa00;">📖 Projet IoT</h2>
             <p>Par <strong>Ir DIAMONEKA VAKANDA Jonathan</strong></p>
@@ -654,19 +648,19 @@
             }
         }
 
-        function logout() {
-            sessionStorage.removeItem('loggedIn');
-            location.reload();
+        function logout() { 
+            sessionStorage.removeItem('loggedIn'); 
+            location.reload(); 
         }
 
-        function showDashboard() {
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('descriptionPage').style.display = 'none';
+        function showDashboard() { 
+            document.getElementById('dashboard').style.display = 'block'; 
+            document.getElementById('descriptionPage').style.display = 'none'; 
         }
 
-        function showDescription() {
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('descriptionPage').style.display = 'block';
+        function showDescription() { 
+            document.getElementById('dashboard').style.display = 'none'; 
+            document.getElementById('descriptionPage').style.display = 'block'; 
         }
 
         const CONFIG = {
@@ -849,33 +843,33 @@
 
         function toggleTheme() {
             const body = document.body;
-            if (body.classList.contains('dark-theme')) {
-                body.classList.remove('dark-theme');
-                body.classList.add('light-theme');
-                localStorage.setItem('theme', 'light');
+            if (body.classList.contains('dark-theme')) { 
+                body.classList.remove('dark-theme'); 
+                body.classList.add('light-theme'); 
+                localStorage.setItem('theme', 'light'); 
             }
-            else {
-                body.classList.remove('light-theme');
-                body.classList.add('dark-theme');
-                localStorage.setItem('theme', 'dark');
+            else { 
+                body.classList.remove('light-theme'); 
+                body.classList.add('dark-theme'); 
+                localStorage.setItem('theme', 'dark'); 
             }
-            if (chart) {
-                const isDark = body.classList.contains('dark-theme');
-                chart.options.scales.y.grid.color = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-                chart.options.scales.y.ticks.color = isDark ? '#e0e0e0' : '#333';
-                chart.update();
+            if (chart) { 
+                const isDark = body.classList.contains('dark-theme'); 
+                chart.options.scales.y.grid.color = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'; 
+                chart.options.scales.y.ticks.color = isDark ? '#e0e0e0' : '#333'; 
+                chart.update(); 
             }
         }
 
         function loadTheme() {
             const saved = localStorage.getItem('theme');
-            if (saved === 'light') {
-                document.body.classList.add('light-theme');
-                document.body.classList.remove('dark-theme');
+            if (saved === 'light') { 
+                document.body.classList.add('light-theme'); 
+                document.body.classList.remove('dark-theme'); 
             }
-            else {
-                document.body.classList.add('dark-theme');
-                document.body.classList.remove('light-theme');
+            else { 
+                document.body.classList.add('dark-theme'); 
+                document.body.classList.remove('light-theme'); 
             }
         }
 
@@ -910,23 +904,23 @@
         }
 
         function initApp() {
-            loadTheme();
-            initChart();
-            readLEDState();
-            loadHistory();
+            loadTheme(); 
+            initChart(); 
+            readLEDState(); 
+            loadHistory(); 
             startAutoRefresh();
-
+            
             document.getElementById('deviceBadge').innerHTML = getDeviceType();
             document.getElementById('btnOn').onclick = () => sendCommand(1);
             document.getElementById('btnOff').onclick = () => sendCommand(0);
             document.getElementById('backBtn').onclick = showDashboard;
-
+            
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.onclick = () => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentFilter = btn.dataset.filter;
-                    updateHistoryDisplay();
+                btn.onclick = () => { 
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); 
+                    btn.classList.add('active'); 
+                    currentFilter = btn.dataset.filter; 
+                    updateHistoryDisplay(); 
                 };
             });
 
@@ -935,8 +929,8 @@
                 item.onclick = () => {
                     const action = item.dataset.action;
                     closeMenu();
-
-                    switch (action) {
+                    
+                    switch(action) {
                         case 'dashboard':
                             scrollToElement('motorControl');
                             break;
