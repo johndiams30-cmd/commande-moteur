@@ -19,9 +19,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            overflow-x: hidden;
         }
 
         body.light-theme {
@@ -40,6 +38,20 @@
             background: #f8f9fa;
         }
 
+        body.light-theme .sidebar {
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .menu-item {
+            color: #333;
+        }
+
+        body.light-theme .menu-item:hover {
+            background: #667eea;
+            color: white;
+        }
+
         body.dark-theme {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #e0e0e0;
@@ -56,9 +68,119 @@
             background: #2a2a3a;
         }
 
+        body.dark-theme .sidebar {
+            background: #1e1e2f;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-theme .menu-item {
+            color: #e0e0e0;
+        }
+
+        body.dark-theme .menu-item:hover {
+            background: #ffaa00;
+            color: #1a1a2e;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-280px);
+        }
+
+        .menu-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 2px solid #ffaa00;
+        }
+
+        .menu-header h2 {
+            color: #ffaa00;
+            font-size: 20px;
+        }
+
+        .menu-header p {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .menu-items {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            margin: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .menu-item:hover {
+            transform: translateX(5px);
+        }
+
+        .menu-item.active {
+            background: #ffaa00;
+            color: #1a1a2e;
+        }
+
+        .menu-item .emoji {
+            font-size: 20px;
+        }
+
+        .toggle-menu {
+            position: fixed;
+            left: 10px;
+            top: 20px;
+            z-index: 101;
+            background: #ffaa00;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .toggle-menu:hover {
+            transform: scale(1.05);
+        }
+
+        /* Main Container */
+        .main-wrapper {
+            flex: 1;
+            margin-left: 280px;
+            transition: margin-left 0.3s ease;
+            padding: 20px;
+        }
+
+        .main-wrapper.expanded {
+            margin-left: 0;
+        }
+
         .container {
             max-width: 550px;
-            width: 100%;
+            margin: 0 auto;
             border-radius: 20px;
             padding: 20px;
         }
@@ -141,41 +263,6 @@
             border-radius: 20px;
         }
 
-        .header-buttons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-
-        .theme-btn,
-        .logout-btn,
-        .info-btn,
-        .refresh-btn,
-        .export-btn,
-        .pdf-btn {
-            background: transparent;
-            border: 2px solid #ffaa00;
-            border-radius: 10px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.3s;
-            color: inherit;
-        }
-
-        .theme-btn:hover,
-        .logout-btn:hover,
-        .info-btn:hover,
-        .refresh-btn:hover,
-        .export-btn:hover,
-        .pdf-btn:hover {
-            background: #ffaa00;
-            color: #333;
-            transform: scale(1.05);
-        }
-
         .status-card {
             border-radius: 15px;
             padding: 20px;
@@ -239,6 +326,7 @@
             border: none;
             border-radius: 50px;
             cursor: pointer;
+            transition: transform 0.2s;
         }
 
         .btn:active {
@@ -376,22 +464,6 @@
             opacity: 0.7;
         }
 
-        .loading {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #ffaa00;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
@@ -416,7 +488,19 @@
             }
         }
 
-        @media (max-width: 500px) {
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 260px;
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+            }
+
+            .toggle-menu {
+                display: block;
+            }
+
             .info-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -429,94 +513,142 @@
                 justify-content: center;
             }
         }
+
+        @media (min-width: 769px) {
+            .toggle-menu {
+                display: none;
+            }
+        }
     </style>
 </head>
 
 <body class="dark-theme">
-    <div class="container login-container" id="loginContainer">
-        <div class="login-box">
-            <h2>🔐 Accès sécurisé</h2>
-            <input type="password" id="passwordInput" placeholder="Mot de passe" autocomplete="off">
-            <button id="loginBtn">Se connecter</button>
-            <div class="error-msg" id="loginError"></div>
+    <button class="toggle-menu" id="toggleMenuBtn">☰</button>
+
+    <div class="sidebar" id="sidebar">
+        <div class="menu-header">
+            <h2>🔧 PROJET IoT</h2>
+            <p>Menu de contrôle</p>
+        </div>
+        <div class="menu-items">
+            <div class="menu-item active" data-page="dashboard">
+                <span class="emoji">📊</span>
+                <span>Tableau de bord</span>
+            </div>
+            <div class="menu-item" data-page="history">
+                <span class="emoji">📜</span>
+                <span>Historique</span>
+            </div>
+            <div class="menu-item" data-page="stats">
+                <span class="emoji">📈</span>
+                <span>Statistiques</span>
+            </div>
+            <div class="menu-item" data-page="chart">
+                <span class="emoji">📉</span>
+                <span>Graphique</span>
+            </div>
+            <div class="menu-item" data-page="export">
+                <span class="emoji">💾</span>
+                <span>Export données</span>
+            </div>
+            <div class="menu-item" data-page="theme">
+                <span class="emoji">🎨</span>
+                <span>Changer thème</span>
+            </div>
+            <div class="menu-item" data-page="info">
+                <span class="emoji">ℹ️</span>
+                <span>À propos</span>
+            </div>
+            <div class="menu-item" data-page="logout">
+                <span class="emoji">🚪</span>
+                <span>Déconnexion</span>
+            </div>
         </div>
     </div>
 
-    <div class="container dashboard" id="dashboard">
-        <h1>🔧 PROJET IoT <span class="welcome-badge" id="deviceBadge">💻</span></h1>
-
-        <div class="header-buttons">
-            <button class="refresh-btn" id="refreshBtn">🔄 Rafraîchir</button>
-            <button class="export-btn" id="exportBtn">📥 CSV</button>
-            <button class="pdf-btn" id="pdfBtn">📄 PDF</button>
-            <button class="info-btn" id="infoBtn">ℹ️ Info</button>
-            <button class="theme-btn" id="themeToggle">☀️ Mode clair</button>
-            <button class="logout-btn" id="logoutBtn">🚪 Déconnexion</button>
-        </div>
-
-        <div class="status-card">
-            <h3>État du Moteur</h3>
-            <div class="led-container">
-                <div class="led led-off" id="led"></div>
-                <span id="ledStatus" style="font-size: 18px; font-weight: bold;">---</span>
-            </div>
-            <div class="runtime" id="runtimeDisplay">⏱️ Temps: --</div>
-        </div>
-
-        <div class="control-buttons">
-            <button class="btn btn-on" id="btnOn">🟢 MARCHE</button>
-            <button class="btn btn-off" id="btnOff">🔴 ARRÊT</button>
-        </div>
-
-        <div class="info-grid">
-            <div class="info-item">
-                <div class="info-label">Dernière commande</div>
-                <div class="info-value" id="lastCommand">-</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Connexion</div>
-                <div class="info-value" id="connectionStatus">OK</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Aujourd'hui</div>
-                <div class="info-value" id="todayCount">0</div>
+    <div class="main-wrapper" id="mainWrapper">
+        <div class="container login-container" id="loginContainer">
+            <div class="login-box">
+                <h2>🔐 Accès sécurisé</h2>
+                <input type="password" id="passwordInput" placeholder="Mot de passe" autocomplete="off">
+                <button id="loginBtn">Se connecter</button>
+                <div class="error-msg" id="loginError"></div>
             </div>
         </div>
 
-        <div class="stats-card">
-            <h4>📊 Statistiques</h4>
-            <div class="stats-row">
-                <div class="stat">
-                    <div class="stat-number" id="pcCount">0</div>
-                    <div>💻 PC</div>
+        <div class="container dashboard" id="dashboard">
+            <h1>🔧 PROJET IoT <span class="welcome-badge" id="deviceBadge">💻</span></h1>
+
+            <!-- Contrôle moteur -->
+            <div class="status-card" id="motorControl">
+                <h3>État du Moteur</h3>
+                <div class="led-container">
+                    <div class="led led-off" id="led"></div>
+                    <span id="ledStatus" style="font-size: 18px; font-weight: bold;">---</span>
                 </div>
-                <div class="stat">
-                    <div class="stat-number" id="mobileCount">0</div>
-                    <div>📱 Mobile</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" id="totalCommands">0</div>
-                    <div>Total</div>
+                <div class="runtime" id="runtimeDisplay">⏱️ Temps: --</div>
+                <div class="control-buttons">
+                    <button class="btn btn-on" id="btnOn">🟢 MARCHE</button>
+                    <button class="btn btn-off" id="btnOff">🔴 ARRÊT</button>
                 </div>
             </div>
-        </div>
 
-        <div class="chart-container"><canvas id="commandChart"></canvas></div>
-
-        <div class="history-section">
-            <h3>📜 Historique
-                <div class="filter-buttons">
-                    <button class="filter-btn active" data-filter="all">Tous</button>
-                    <button class="filter-btn" data-filter="on">MARCHE</button>
-                    <button class="filter-btn" data-filter="off">ARRÊT</button>
+            <!-- Infos rapides -->
+            <div class="info-grid" id="quickInfo">
+                <div class="info-item">
+                    <div class="info-label">Dernière commande</div>
+                    <div class="info-value" id="lastCommand">-</div>
                 </div>
-            </h3>
-            <div class="history-list" id="historyList">
-                <div style="text-align:center;padding:20px;">Chargement...</div>
+                <div class="info-item">
+                    <div class="info-label">Connexion</div>
+                    <div class="info-value" id="connectionStatus">OK</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Aujourd'hui</div>
+                    <div class="info-value" id="todayCount">0</div>
+                </div>
             </div>
-            <div class="sync-status" id="syncStatus">🔄 Synchronisation...</div>
+
+            <!-- Statistiques -->
+            <div class="stats-card" id="statsSection">
+                <h4>📊 Statistiques générales</h4>
+                <div class="stats-row">
+                    <div class="stat">
+                        <div class="stat-number" id="pcCount">0</div>
+                        <div>💻 PC</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="mobileCount">0</div>
+                        <div>📱 Mobile</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="totalCommands">0</div>
+                        <div>Total</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graphique -->
+            <div class="chart-container" id="chartSection">
+                <canvas id="commandChart"></canvas>
+            </div>
+
+            <!-- Historique -->
+            <div class="history-section" id="historySection">
+                <h3>📜 Historique des commandes
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">Tous</button>
+                        <button class="filter-btn" data-filter="on">MARCHE</button>
+                        <button class="filter-btn" data-filter="off">ARRÊT</button>
+                    </div>
+                </h3>
+                <div class="history-list" id="historyList">
+                    <div style="text-align:center;padding:20px;">Chargement...</div>
+                </div>
+                <div class="sync-status" id="syncStatus">🔄 Synchronisation...</div>
+            </div>
+            <div class="connection-status">🔌 Connecté à ThingSpeak</div>
         </div>
-        <div class="connection-status">🔌 Connecté à ThingSpeak</div>
     </div>
 
     <div style="display:none; max-width:500px; width:100%; border-radius:20px; padding:20px;" id="descriptionPage">
@@ -557,15 +689,25 @@
             }
         }
 
-        function logout() { sessionStorage.removeItem('loggedIn'); location.reload(); }
-        function showDashboard() { document.getElementById('dashboard').style.display = 'block'; document.getElementById('descriptionPage').style.display = 'none'; }
-        function showDescription() { document.getElementById('dashboard').style.display = 'none'; document.getElementById('descriptionPage').style.display = 'block'; }
+        function logout() {
+            sessionStorage.removeItem('loggedIn');
+            location.reload();
+        }
 
-        // ✅ NOUVELLES CLÉS API (Canal 3317677)
+        function showDashboard() {
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('descriptionPage').style.display = 'none';
+        }
+
+        function showDescription() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('descriptionPage').style.display = 'block';
+        }
+
         const CONFIG = {
             channelId: '3317677',
-            writeApiKey: '3RESQCXRUIV4IX4T',   // ← Vérifie qu'il n'y a pas d'erreur
-            readApiKey: 'DF0HVFG59NAEELFR',    // ← Vérifie qu'il n'y a pas d'erreur
+            writeApiKey: '3RESQCXRUIV4IX4T',
+            readApiKey: 'DF0HVFG59NAEELFR',
             refreshInterval: 5000
         };
 
@@ -595,10 +737,7 @@
 
             document.getElementById('lastCommand').textContent = commandText;
             vibrate();
-
-            // Affichage local immédiat
             updateLEDState(value);
-
             showNotification(`⏳ Envoi de la commande ${commandText}...`, 'success');
 
             try {
@@ -608,10 +747,8 @@
 
                 if (result && result !== "0") {
                     showNotification(`✅ Commande ${commandText} envoyée avec succès ! (ID: ${result})`, 'success');
-                    console.log(`Commande envoyée avec succès, ID: ${result}`);
                 } else {
                     showNotification(`❌ Échec : La commande ${commandText} n'a pas été enregistrée.`, 'error');
-                    console.error(`Erreur: ThingSpeak a retourné ${result}`);
                 }
 
                 setTimeout(() => {
@@ -621,7 +758,6 @@
 
             } catch (e) {
                 showNotification(`❌ Erreur réseau : Impossible d'envoyer la commande ${commandText}`, 'error');
-                console.error('Erreur détaillée:', e);
             }
         }
 
@@ -747,16 +883,37 @@
         }
 
         function toggleTheme() {
-            const body = document.body, btn = document.getElementById('themeToggle');
-            if (body.classList.contains('dark-theme')) { body.classList.remove('dark-theme'); body.classList.add('light-theme'); btn.innerHTML = '🌙 Mode sombre'; localStorage.setItem('theme', 'light'); }
-            else { body.classList.remove('light-theme'); body.classList.add('dark-theme'); btn.innerHTML = '☀️ Mode clair'; localStorage.setItem('theme', 'dark'); }
-            if (chart) { const isDark = body.classList.contains('dark-theme'); chart.options.scales.y.grid.color = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'; chart.options.scales.y.ticks.color = isDark ? '#e0e0e0' : '#333'; chart.update(); }
+            const body = document.body, btn = document.querySelector('[data-page="theme"] span:last-child');
+            if (body.classList.contains('dark-theme')) {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                if (btn) btn.textContent = '🌙 Mode sombre';
+                localStorage.setItem('theme', 'light');
+            }
+            else {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                if (btn) btn.textContent = '☀️ Mode clair';
+                localStorage.setItem('theme', 'dark');
+            }
+            if (chart) {
+                const isDark = body.classList.contains('dark-theme');
+                chart.options.scales.y.grid.color = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+                chart.options.scales.y.ticks.color = isDark ? '#e0e0e0' : '#333';
+                chart.update();
+            }
         }
 
         function loadTheme() {
             const saved = localStorage.getItem('theme');
-            if (saved === 'light') { document.body.classList.add('light-theme'); document.body.classList.remove('dark-theme'); document.getElementById('themeToggle').innerHTML = '🌙 Mode sombre'; }
-            else { document.body.classList.add('dark-theme'); document.body.classList.remove('light-theme'); document.getElementById('themeToggle').innerHTML = '☀️ Mode clair'; }
+            if (saved === 'light') {
+                document.body.classList.add('light-theme');
+                document.body.classList.remove('dark-theme');
+            }
+            else {
+                document.body.classList.add('dark-theme');
+                document.body.classList.remove('light-theme');
+            }
         }
 
         function showNotification(msg, type) {
@@ -772,21 +929,81 @@
             refreshInterval = setInterval(async () => { await readLEDState(); await loadHistory(); }, CONFIG.refreshInterval);
         }
 
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
         function initApp() {
-            loadTheme(); initChart(); readLEDState(); loadHistory(); startAutoRefresh();
+            loadTheme();
+            initChart();
+            readLEDState();
+            loadHistory();
+            startAutoRefresh();
+
             document.getElementById('deviceBadge').innerHTML = getDeviceType();
             document.getElementById('btnOn').onclick = () => sendCommand(1);
             document.getElementById('btnOff').onclick = () => sendCommand(0);
-            document.getElementById('themeToggle').onclick = toggleTheme;
-            document.getElementById('logoutBtn').onclick = logout;
-            document.getElementById('infoBtn').onclick = showDescription;
             document.getElementById('backBtn').onclick = showDashboard;
-            document.getElementById('refreshBtn').onclick = () => { loadHistory(); showNotification('Actualisé', 'success'); };
-            document.getElementById('exportBtn').onclick = exportCSV;
-            document.getElementById('pdfBtn').onclick = exportPDF;
+
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.onclick = () => { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentFilter = btn.dataset.filter; updateHistoryDisplay(); };
+                btn.onclick = () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    updateHistoryDisplay();
+                };
             });
+
+            // Menu navigation
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.onclick = () => {
+                    const page = item.dataset.page;
+                    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+
+                    switch (page) {
+                        case 'dashboard':
+                            scrollToSection('motorControl');
+                            break;
+                        case 'history':
+                            scrollToSection('historySection');
+                            break;
+                        case 'stats':
+                            scrollToSection('statsSection');
+                            break;
+                        case 'chart':
+                            scrollToSection('chartSection');
+                            break;
+                        case 'export':
+                            const exportMenu = confirm('Exporter les données ?\nCliquez sur OK pour CSV, Annuler pour PDF');
+                            if (exportMenu) exportCSV();
+                            else exportPDF();
+                            break;
+                        case 'theme':
+                            toggleTheme();
+                            break;
+                        case 'info':
+                            showDescription();
+                            break;
+                        case 'logout':
+                            logout();
+                            break;
+                    }
+                };
+            });
+
+            // Toggle sidebar on mobile
+            const toggleBtn = document.getElementById('toggleMenuBtn');
+            const sidebar = document.getElementById('sidebar');
+            const mainWrapper = document.getElementById('mainWrapper');
+
+            toggleBtn.onclick = () => {
+                sidebar.classList.toggle('collapsed');
+                mainWrapper.classList.toggle('expanded');
+            };
         }
 
         document.getElementById('loginBtn').onclick = login;
