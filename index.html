@@ -18,8 +18,8 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
-            display: flex;
-            overflow-x: hidden;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
         }
 
         body.light-theme {
@@ -38,25 +38,6 @@
             background: #f8f9fa;
         }
 
-        body.light-theme .sidebar {
-            background: white;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        body.light-theme .menu-item {
-            color: #333;
-        }
-
-        body.light-theme .menu-item:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        body.dark-theme {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #e0e0e0;
-        }
-
         body.dark-theme .container {
             background: #1e1e2f;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
@@ -68,127 +49,124 @@
             background: #2a2a3a;
         }
 
-        body.dark-theme .sidebar {
-            background: #1e1e2f;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-        }
-
-        body.dark-theme .menu-item {
-            color: #e0e0e0;
-        }
-
-        body.dark-theme .menu-item:hover {
+        /* Menu déroulant style Android */
+        .menu-header-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             background: #ffaa00;
+            z-index: 1000;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-theme .menu-header-bar {
+            background: #ffaa00;
+        }
+
+        .menu-icon {
+            font-size: 28px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+
+        .menu-title {
+            font-size: 18px;
+            font-weight: bold;
             color: #1a1a2e;
         }
 
-        /* Sidebar Styles */
-        .sidebar {
-            width: 280px;
+        .menu-overlay {
             position: fixed;
-            left: 0;
             top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            display: none;
+        }
+
+        .menu-drawer {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
             height: 100vh;
+            background: #1e1e2f;
+            z-index: 1002;
+            transition: left 0.3s ease;
             overflow-y: auto;
-            z-index: 100;
-            transform: translateX(0);
-            transition: transform 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
         }
 
-        .sidebar.collapsed {
-            transform: translateX(-280px);
+        body.light-theme .menu-drawer {
+            background: white;
         }
 
-        .menu-header {
+        .menu-drawer.open {
+            left: 0;
+        }
+
+        .menu-header-drawer {
             padding: 30px 20px;
             text-align: center;
             border-bottom: 2px solid #ffaa00;
+            margin-bottom: 20px;
         }
 
-        .menu-header h2 {
+        .menu-header-drawer h3 {
             color: #ffaa00;
             font-size: 20px;
         }
 
-        .menu-header p {
+        .menu-header-drawer p {
             font-size: 11px;
             opacity: 0.7;
             margin-top: 5px;
         }
 
-        .menu-items {
-            padding: 20px 0;
-        }
-
-        .menu-item {
+        .menu-item-drawer {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 20px;
+            padding: 14px 20px;
             margin: 5px 10px;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 15px;
         }
 
-        .menu-item:hover {
-            transform: translateX(5px);
+        .menu-item-drawer:hover {
+            background: rgba(255, 170, 0, 0.1);
         }
 
-        .menu-item.active {
+        .menu-item-drawer:active {
             background: #ffaa00;
             color: #1a1a2e;
         }
 
-        .menu-item .emoji {
-            font-size: 20px;
-        }
-
-        .toggle-menu {
-            position: fixed;
-            left: 10px;
-            top: 20px;
-            z-index: 101;
-            background: #ffaa00;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s;
-        }
-
-        .toggle-menu:hover {
-            transform: scale(1.05);
-        }
-
-        /* Main Container */
-        .main-wrapper {
-            flex: 1;
-            margin-left: 280px;
-            transition: margin-left 0.3s ease;
-            padding: 20px;
-        }
-
-        .main-wrapper.expanded {
-            margin-left: 0;
-        }
-
         .container {
             max-width: 550px;
+            width: 100%;
             margin: 0 auto;
             border-radius: 20px;
-            padding: 20px;
+            padding: 70px 20px 20px 20px;
         }
 
         .login-container {
             max-width: 400px;
             margin: 0 auto;
             text-align: center;
+            padding-top: 100px;
         }
 
         .login-box {
@@ -246,7 +224,7 @@
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 22px;
             text-align: center;
             margin-bottom: 20px;
             display: flex;
@@ -381,7 +359,7 @@
         }
 
         .stat-number {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
             color: #ffaa00;
         }
@@ -422,7 +400,7 @@
         }
 
         .history-list {
-            max-height: 250px;
+            max-height: 300px;
             overflow-y: auto;
         }
 
@@ -488,19 +466,7 @@
             }
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 260px;
-            }
-
-            .main-wrapper {
-                margin-left: 0;
-            }
-
-            .toggle-menu {
-                display: block;
-            }
-
+        @media (max-width: 500px) {
             .info-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -512,146 +478,145 @@
             .btn {
                 justify-content: center;
             }
-        }
 
-        @media (min-width: 769px) {
-            .toggle-menu {
-                display: none;
+            .container {
+                padding: 70px 15px 20px 15px;
             }
         }
     </style>
 </head>
 
 <body class="dark-theme">
-    <button class="toggle-menu" id="toggleMenuBtn">☰</button>
+    <!-- Menu Android Style -->
+    <div class="menu-header-bar">
+        <button class="menu-icon" id="menuIcon">☰</button>
+        <div class="menu-title">PROJET IoT</div>
+        <div style="width: 30px;"></div>
+    </div>
 
-    <div class="sidebar" id="sidebar">
-        <div class="menu-header">
-            <h2>🔧 PROJET IoT</h2>
+    <div class="menu-overlay" id="menuOverlay"></div>
+    <div class="menu-drawer" id="menuDrawer">
+        <div class="menu-header-drawer">
+            <h3>🔧 PROJET IoT</h3>
             <p>Menu de contrôle</p>
         </div>
-        <div class="menu-items">
-            <div class="menu-item active" data-page="dashboard">
-                <span class="emoji">📊</span>
-                <span>Tableau de bord</span>
-            </div>
-            <div class="menu-item" data-page="history">
-                <span class="emoji">📜</span>
-                <span>Historique</span>
-            </div>
-            <div class="menu-item" data-page="stats">
-                <span class="emoji">📈</span>
-                <span>Statistiques</span>
-            </div>
-            <div class="menu-item" data-page="chart">
-                <span class="emoji">📉</span>
-                <span>Graphique</span>
-            </div>
-            <div class="menu-item" data-page="export">
-                <span class="emoji">💾</span>
-                <span>Export données</span>
-            </div>
-            <div class="menu-item" data-page="theme">
-                <span class="emoji">🎨</span>
-                <span>Changer thème</span>
-            </div>
-            <div class="menu-item" data-page="info">
-                <span class="emoji">ℹ️</span>
-                <span>À propos</span>
-            </div>
-            <div class="menu-item" data-page="logout">
-                <span class="emoji">🚪</span>
-                <span>Déconnexion</span>
-            </div>
+        <div class="menu-item-drawer" data-action="dashboard">
+            <span>📊</span> Tableau de bord
+        </div>
+        <div class="menu-item-drawer" data-action="stats">
+            <span>📈</span> Statistiques
+        </div>
+        <div class="menu-item-drawer" data-action="chart">
+            <span>📉</span> Graphique
+        </div>
+        <div class="menu-item-drawer" data-action="history">
+            <span>📜</span> Historique
+        </div>
+        <div class="menu-item-drawer" data-action="exportCSV">
+            <span>📥</span> Exporter CSV
+        </div>
+        <div class="menu-item-drawer" data-action="exportPDF">
+            <span>📄</span> Exporter PDF
+        </div>
+        <div class="menu-item-drawer" data-action="theme">
+            <span>🎨</span> Changer thème
+        </div>
+        <div class="menu-item-drawer" data-action="info">
+            <span>ℹ️</span> À propos
+        </div>
+        <div class="menu-item-drawer" data-action="refresh">
+            <span>🔄</span> Rafraîchir
+        </div>
+        <div class="menu-item-drawer" data-action="logout">
+            <span>🚪</span> Déconnexion
         </div>
     </div>
 
-    <div class="main-wrapper" id="mainWrapper">
-        <div class="container login-container" id="loginContainer">
-            <div class="login-box">
-                <h2>🔐 Accès sécurisé</h2>
-                <input type="password" id="passwordInput" placeholder="Mot de passe" autocomplete="off">
-                <button id="loginBtn">Se connecter</button>
-                <div class="error-msg" id="loginError"></div>
-            </div>
-        </div>
-
-        <div class="container dashboard" id="dashboard">
-            <h1>🔧 PROJET IoT <span class="welcome-badge" id="deviceBadge">💻</span></h1>
-
-            <!-- Contrôle moteur -->
-            <div class="status-card" id="motorControl">
-                <h3>État du Moteur</h3>
-                <div class="led-container">
-                    <div class="led led-off" id="led"></div>
-                    <span id="ledStatus" style="font-size: 18px; font-weight: bold;">---</span>
-                </div>
-                <div class="runtime" id="runtimeDisplay">⏱️ Temps: --</div>
-                <div class="control-buttons">
-                    <button class="btn btn-on" id="btnOn">🟢 MARCHE</button>
-                    <button class="btn btn-off" id="btnOff">🔴 ARRÊT</button>
-                </div>
-            </div>
-
-            <!-- Infos rapides -->
-            <div class="info-grid" id="quickInfo">
-                <div class="info-item">
-                    <div class="info-label">Dernière commande</div>
-                    <div class="info-value" id="lastCommand">-</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Connexion</div>
-                    <div class="info-value" id="connectionStatus">OK</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Aujourd'hui</div>
-                    <div class="info-value" id="todayCount">0</div>
-                </div>
-            </div>
-
-            <!-- Statistiques -->
-            <div class="stats-card" id="statsSection">
-                <h4>📊 Statistiques générales</h4>
-                <div class="stats-row">
-                    <div class="stat">
-                        <div class="stat-number" id="pcCount">0</div>
-                        <div>💻 PC</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number" id="mobileCount">0</div>
-                        <div>📱 Mobile</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number" id="totalCommands">0</div>
-                        <div>Total</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Graphique -->
-            <div class="chart-container" id="chartSection">
-                <canvas id="commandChart"></canvas>
-            </div>
-
-            <!-- Historique -->
-            <div class="history-section" id="historySection">
-                <h3>📜 Historique des commandes
-                    <div class="filter-buttons">
-                        <button class="filter-btn active" data-filter="all">Tous</button>
-                        <button class="filter-btn" data-filter="on">MARCHE</button>
-                        <button class="filter-btn" data-filter="off">ARRÊT</button>
-                    </div>
-                </h3>
-                <div class="history-list" id="historyList">
-                    <div style="text-align:center;padding:20px;">Chargement...</div>
-                </div>
-                <div class="sync-status" id="syncStatus">🔄 Synchronisation...</div>
-            </div>
-            <div class="connection-status">🔌 Connecté à ThingSpeak</div>
+    <div class="container login-container" id="loginContainer">
+        <div class="login-box">
+            <h2>🔐 Accès sécurisé</h2>
+            <input type="password" id="passwordInput" placeholder="Mot de passe" autocomplete="off">
+            <button id="loginBtn">Se connecter</button>
+            <div class="error-msg" id="loginError"></div>
         </div>
     </div>
 
-    <div style="display:none; max-width:500px; width:100%; border-radius:20px; padding:20px;" id="descriptionPage">
+    <div class="container dashboard" id="dashboard">
+        <h1>🔧 PROJET IoT <span class="welcome-badge" id="deviceBadge">💻</span></h1>
+
+        <!-- Contrôle moteur -->
+        <div class="status-card" id="motorControl">
+            <h3>État du Moteur</h3>
+            <div class="led-container">
+                <div class="led led-off" id="led"></div>
+                <span id="ledStatus" style="font-size: 18px; font-weight: bold;">---</span>
+            </div>
+            <div class="runtime" id="runtimeDisplay">⏱️ Temps: --</div>
+            <div class="control-buttons">
+                <button class="btn btn-on" id="btnOn">🟢 MARCHE</button>
+                <button class="btn btn-off" id="btnOff">🔴 ARRÊT</button>
+            </div>
+        </div>
+
+        <!-- Infos rapides -->
+        <div class="info-grid" id="quickInfo">
+            <div class="info-item">
+                <div class="info-label">Dernière commande</div>
+                <div class="info-value" id="lastCommand">-</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Connexion</div>
+                <div class="info-value" id="connectionStatus">OK</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Aujourd'hui</div>
+                <div class="info-value" id="todayCount">0</div>
+            </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="stats-card" id="statsSection">
+            <h4>📊 Statistiques générales</h4>
+            <div class="stats-row">
+                <div class="stat">
+                    <div class="stat-number" id="pcCount">0</div>
+                    <div>💻 PC</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="mobileCount">0</div>
+                    <div>📱 Mobile</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="totalCommands">0</div>
+                    <div>Total</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphique -->
+        <div class="chart-container" id="chartSection">
+            <canvas id="commandChart"></canvas>
+        </div>
+
+        <!-- Historique -->
+        <div class="history-section" id="historySection">
+            <h3>📜 Historique des commandes
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Tous</button>
+                    <button class="filter-btn" data-filter="on">MARCHE</button>
+                    <button class="filter-btn" data-filter="off">ARRÊT</button>
+                </div>
+            </h3>
+            <div class="history-list" id="historyList">
+                <div style="text-align:center;padding:20px;">Chargement...</div>
+            </div>
+            <div class="sync-status" id="syncStatus">🔄 Synchronisation...</div>
+        </div>
+        <div class="connection-status">🔌 Connecté à ThingSpeak</div>
+    </div>
+
+    <div style="display:none; max-width:500px; width:100%; border-radius:20px; padding:20px; margin-top: 70px;"
+        id="descriptionPage">
         <div style="background:rgba(255,255,255,0.1); border-radius:20px; padding:30px; text-align:center;">
             <h2 style="color:#ffaa00;">📖 Projet IoT</h2>
             <p>Par <strong>Ir DIAMONEKA VAKANDA Jonathan</strong></p>
@@ -746,7 +711,7 @@
                 const result = await response.text();
 
                 if (result && result !== "0") {
-                    showNotification(`✅ Commande ${commandText} envoyée avec succès ! (ID: ${result})`, 'success');
+                    showNotification(`✅ Commande ${commandText} envoyée avec succès !`, 'success');
                 } else {
                     showNotification(`❌ Échec : La commande ${commandText} n'a pas été enregistrée.`, 'error');
                 }
@@ -883,17 +848,15 @@
         }
 
         function toggleTheme() {
-            const body = document.body, btn = document.querySelector('[data-page="theme"] span:last-child');
+            const body = document.body;
             if (body.classList.contains('dark-theme')) {
                 body.classList.remove('dark-theme');
                 body.classList.add('light-theme');
-                if (btn) btn.textContent = '🌙 Mode sombre';
                 localStorage.setItem('theme', 'light');
             }
             else {
                 body.classList.remove('light-theme');
                 body.classList.add('dark-theme');
-                if (btn) btn.textContent = '☀️ Mode clair';
                 localStorage.setItem('theme', 'dark');
             }
             if (chart) {
@@ -919,7 +882,7 @@
         function showNotification(msg, type) {
             const div = document.createElement('div');
             div.textContent = msg;
-            div.style.cssText = `position:fixed; bottom:20px; right:20px; padding:12px 24px; background:${type === 'success' ? '#00b09b' : '#ff6b6b'}; color:white; border-radius:10px; z-index:1000; animation:slideIn 0.3s ease;`;
+            div.style.cssText = `position:fixed; bottom:20px; right:20px; left:20px; padding:12px 24px; background:${type === 'success' ? '#00b09b' : '#ff6b6b'}; color:white; border-radius:10px; z-index:10000; text-align:center; animation:slideIn 0.3s ease;`;
             document.body.appendChild(div);
             setTimeout(() => { div.style.animation = 'slideOut 0.3s ease'; setTimeout(() => div.remove(), 300); }, 3000);
         }
@@ -929,11 +892,21 @@
             refreshInterval = setInterval(async () => { await readLEDState(); await loadHistory(); }, CONFIG.refreshInterval);
         }
 
-        function scrollToSection(sectionId) {
-            const element = document.getElementById(sectionId);
+        function scrollToElement(elementId) {
+            const element = document.getElementById(elementId);
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
+        }
+
+        function closeMenu() {
+            document.getElementById('menuDrawer').classList.remove('open');
+            document.getElementById('menuOverlay').style.display = 'none';
+        }
+
+        function openMenu() {
+            document.getElementById('menuDrawer').classList.add('open');
+            document.getElementById('menuOverlay').style.display = 'block';
         }
 
         function initApp() {
@@ -957,36 +930,41 @@
                 };
             });
 
-            // Menu navigation
-            document.querySelectorAll('.menu-item').forEach(item => {
+            // Menu actions
+            document.querySelectorAll('.menu-item-drawer').forEach(item => {
                 item.onclick = () => {
-                    const page = item.dataset.page;
-                    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-                    item.classList.add('active');
+                    const action = item.dataset.action;
+                    closeMenu();
 
-                    switch (page) {
+                    switch (action) {
                         case 'dashboard':
-                            scrollToSection('motorControl');
-                            break;
-                        case 'history':
-                            scrollToSection('historySection');
+                            scrollToElement('motorControl');
                             break;
                         case 'stats':
-                            scrollToSection('statsSection');
+                            scrollToElement('statsSection');
                             break;
                         case 'chart':
-                            scrollToSection('chartSection');
+                            scrollToElement('chartSection');
                             break;
-                        case 'export':
-                            const exportMenu = confirm('Exporter les données ?\nCliquez sur OK pour CSV, Annuler pour PDF');
-                            if (exportMenu) exportCSV();
-                            else exportPDF();
+                        case 'history':
+                            scrollToElement('historySection');
+                            break;
+                        case 'exportCSV':
+                            exportCSV();
+                            break;
+                        case 'exportPDF':
+                            exportPDF();
                             break;
                         case 'theme':
                             toggleTheme();
                             break;
                         case 'info':
                             showDescription();
+                            break;
+                        case 'refresh':
+                            loadHistory();
+                            readLEDState();
+                            showNotification('Données actualisées', 'success');
                             break;
                         case 'logout':
                             logout();
@@ -995,15 +973,9 @@
                 };
             });
 
-            // Toggle sidebar on mobile
-            const toggleBtn = document.getElementById('toggleMenuBtn');
-            const sidebar = document.getElementById('sidebar');
-            const mainWrapper = document.getElementById('mainWrapper');
-
-            toggleBtn.onclick = () => {
-                sidebar.classList.toggle('collapsed');
-                mainWrapper.classList.toggle('expanded');
-            };
+            // Menu toggle
+            document.getElementById('menuIcon').onclick = openMenu;
+            document.getElementById('menuOverlay').onclick = closeMenu;
         }
 
         document.getElementById('loginBtn').onclick = login;
